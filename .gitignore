@@ -1,0 +1,27 @@
+.env
+var
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Mac OS X
+.DS_Store
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# REST Client files
+*.http
+
+.htaccess
+stderr.log
+
+admin.json
+tmp/

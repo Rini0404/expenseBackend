@@ -1,0 +1,21 @@
+{
+  "name": "simple-node-express",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@adminjs/express": "5.0.0",
+    "@adminjs/mongoose": "3.0.0",
+    "adminjs": "6.2.3",
+    "cors": "2.8.5",
+    "express": "4.18.1",
+    "express-formidable": "1.2.0",
+    "express-session": "1.17.3",
+    "tslib": "2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21"
+  },
+  "keywords": [],
+  "description": ""
+}
