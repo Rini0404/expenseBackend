@@ -1,18 +1,19 @@
 const AdminJS = require("adminjs");
 const AdminJSExpress = require("@adminjs/express");
 const AdminJSMongoose = require("@adminjs/mongoose");
+const Provider = require("oidc-provider");
+const path = require("path");
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 
+/** AdminJS Setup */
 // Database
 const connection = require('./config/db.config');
-connection.once('open', ()=>console.log('Database connected Successfully'));
-connection.on('error',(err)=>console.log('Error', err));
-
+const adapter = require('./config/mongoAdapter');
 const Users = require('./models/User')
-                      
+
 AdminJS.registerAdapter(AdminJSMongoose)
 
 const AdminJSOptions = {
@@ -40,12 +41,26 @@ const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
     cookieName: 'adminjs',
     cookiePassword: 'sessionsecret',
   },
-
 );
+
+/** OIDC Provider Setup */
+
+const oidcOptions = require('./config/oidc.config')
+const oidc = new Provider("http://localhost:3000/oidc", { adapter, ...oidcOptions });
+//const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
+oidc.proxy = true;
 
 app.use(admin.options.rootPath, adminRouter);
 app.use(express.json());
 app.use(cors());
+
+app.use(
+  "/oidc",
+  oidc.callback(),
+  (req, res) => {
+    console.log(req);
+  }
+);
 
 app.post("/", function (req, res) {
   console.log(req.body);
@@ -54,7 +69,7 @@ app.post("/", function (req, res) {
 
 app.get("/", (req, res) => {
   console.log(req.query);
-  res.send("thank you from get route");
+  res.sendFile(__dirname + "/views/oidc.html");
 });
 
 app.listen(port, () => {
