@@ -25,3 +25,6 @@ stderr.log
 
 admin.json
 tmp/
+
+package-lock.json
+assets/video/*
