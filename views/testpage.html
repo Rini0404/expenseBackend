@@ -12,11 +12,15 @@
 <body>
     <div>
         <form action="/postVideo" method="post" enctype="multipart/form-data">
-            <input type="file" name="fileSel">
+            <input type="file" name="fileSel" id="fileInput">
             <button type="submit">
                 POST FILE
             </button>
         </form>
     </div>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+    </script>
 </body>
 </html>

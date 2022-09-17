@@ -27,4 +27,4 @@ admin.json
 tmp/
 
 package-lock.json
-assets/video/*
+assets/*

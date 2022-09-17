@@ -7,7 +7,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const fs = require("fs");
-const multer = require("multer");
+const fileUpload = require("express-fileupload");
 const port = process.env.PORT || 3000;
 
 const videoPath = "./assets/video";
@@ -83,15 +83,23 @@ app.use(
 app.use(express.static(__dirname + "/assets"));
 // app.use(express.json({limit: "1000mb"}))
 
-const upload = multer({dest: __dirname + "/assets/video/"});
+app.post("/postVideo", fileUpload({createParentPath: true}), async function (req, res) {
+  console.log(req.files, req.file, req.body);
 
-app.post("/postVideo", upload.single("fileSel"), function (req, res) {
-  req.on("data", (chunk) => {
-    console.log(chunk)
-  });
-  console.log(req);
-  // console.log(req.files)
-  res.end("GOT FILE");
+  var uploadSuccess = false;
+
+  if(req.files) {
+    for(let elmName in req.files) {
+      const file = req.files[elmName];
+      if(!(file instanceof Array)) {
+        await file.mv(`${videoPath}/${file.name}`);
+        uploadSuccess = true;
+        break;
+      }
+    }
+  }
+
+  res.json({success: uploadSuccess, videos: (await getVideos()).map(vidName => `video/${vidName}`)}).end();
 });
 
 app.get("/", (req, res) => {
@@ -102,6 +110,8 @@ app.get("/", (req, res) => {
 app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/views/testpage.html");
 });
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
