@@ -11,7 +11,18 @@
 </head>
 <body>
     <div>
-        <form action="/postVideo" method="post" enctype="multipart/form-data">
+        <h1>Save file to assets/pops</h1>
+        <form action="/pop" method="post" enctype="multipart/form-data">
+            <input type="file" name="fileSel" id="fileInput">
+            <button type="submit">
+                POST FILE
+            </button>
+        </form>
+    </div>
+<div><hr></div>
+    <div>
+        <h1>Save file to Google Drive</h1>
+        <form action="/gdrive" method="post" enctype="multipart/form-data">
             <input type="file" name="fileSel" id="fileInput">
             <button type="submit">
                 POST FILE

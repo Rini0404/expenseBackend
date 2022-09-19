@@ -6,18 +6,13 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const fs = require("fs");
-const fileUpload = require("express-fileupload");
 const port = process.env.PORT || 3000;
-
-const videoPath = "./assets/video";
 
 /** AdminJS Setup */
 // Database
 const connection = require('./config/db.config');
 const adapter = require('./config/mongoAdapter');
 const Users = require('./models/User')
-
 
 
 AdminJS.registerAdapter(AdminJSMongoose)
@@ -56,8 +51,7 @@ const oidc = new Provider("http://localhost:3000/oidc", { adapter, ...oidcOption
 //const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
 oidc.proxy = true;
 
-// console.log(require("os").hostname())
-
+app.use(cors());
 app.use(admin.options.rootPath, adminRouter);
 app.use(express.json({
   limit: "100mb",
@@ -70,37 +64,17 @@ app.use(express.urlencoded({
   extended: true,
   parameterLimit: 50000
 }));
-app.use(cors());
 
-app.use(
-  "/oidc",
-  oidc.callback(),
+app.use("/oidc", oidc.callback(),
   (req, res) => {
     console.log(req);
   }
 );
 
-app.use(express.static(__dirname + "/assets"));
-// app.use(express.json({limit: "1000mb"}))
+app.use(express.static("./assets"));
+app.use("/pops", require("./routes/pops"));
+app.use("/gdrive", require("./utils/googledriveHandler"));
 
-app.post("/postVideo", fileUpload({createParentPath: true}), async function (req, res) {
-  console.log(req.files, req.file, req.body);
-
-  var uploadSuccess = false;
-
-  if(req.files) {
-    for(let elmName in req.files) {
-      const file = req.files[elmName];
-      if(!(file instanceof Array)) {
-        await file.mv(`${videoPath}/${file.name}`);
-        uploadSuccess = true;
-        break;
-      }
-    }
-  }
-
-  res.json({success: uploadSuccess, videos: (await getVideos()).map(vidName => `video/${vidName}`)}).end();
-});
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
@@ -111,12 +85,14 @@ app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/views/testpage.html");
 });
 
-
+app.get("*", (req, res) => {
+  res.redirect("/admin/login");
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-function getVideos() {
-  return fs.promises.readdir("./assets/video");
-}
+// function getVideos() {
+//   return fs.promises.readdir("./assets/video");
+// }
