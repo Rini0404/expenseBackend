@@ -73,6 +73,7 @@ app.use("/oidc", oidc.callback(),
 
 app.use(express.static("./assets"));
 app.use("/pops", require("./routes/pops"));
+app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
 
 

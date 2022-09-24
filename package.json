@@ -10,6 +10,7 @@
   "dependencies": {
     "@adminjs/express": "5.0.0",
     "@adminjs/mongoose": "3.0.0",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@google-cloud/local-auth": "^2.1.0",
     "adminjs": "6.2.3",
     "cors": "2.8.5",
@@ -17,6 +18,7 @@
     "express-fileupload": "^1.4.0",
     "express-formidable": "1.2.0",
     "express-session": "1.17.3",
+    "ffmpeg-extract-frames": "^2.0.2",
     "googleapis": "^105.0.0",
     "jose2": "npm:jose@^2.0.4",
     "lodash": "^4.17.21",
