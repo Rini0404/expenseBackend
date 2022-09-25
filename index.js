@@ -14,6 +14,7 @@ const connection = require('./config/db.config');
 const adapter = require('./config/mongoAdapter');
 const Users = require('./models/User')
 
+
 AdminJS.registerAdapter(AdminJSMongoose)
 
 const AdminJSOptions = {
@@ -50,28 +51,49 @@ const oidc = new Provider("http://localhost:3000/oidc", { adapter, ...oidcOption
 //const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
 oidc.proxy = true;
 
-app.use(admin.options.rootPath, adminRouter);
-app.use(express.json());
 app.use(cors());
+app.use(admin.options.rootPath, adminRouter);
+app.use(express.json({
+  limit: "100mb",
+  extended: true,
+  parameterLimit: 50000
+}));
 
-app.use(
-  "/oidc",
-  oidc.callback(),
+app.use(express.urlencoded({
+  limit: "100mb",
+  extended: true,
+  parameterLimit: 50000
+}));
+
+app.use("/oidc", oidc.callback(),
   (req, res) => {
     console.log(req);
   }
 );
 
-app.post("/", function (req, res) {
-  console.log(req.body);
-  res.send("thank you from post route");
-});
+app.use(express.static("./assets"));
+app.use("/pops", require("./routes/pops"));
+app.use("/swaps", require("./routes/swaps"));
+app.use("/gdrive", require("./utils/googledriveHandler"));
+
 
 app.get("/", (req, res) => {
-  console.log(req.query);
+  // console.log(req.query, );
   res.sendFile(__dirname + "/views/oidc.html");
+});
+
+app.get("/test", (req, res) => {
+  res.sendFile(__dirname + "/views/testpage.html");
+});
+
+app.get("*", (req, res) => {
+  res.redirect("/admin/login");
 });
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+// function getVideos() {
+//   return fs.promises.readdir("./assets/video");
+// }
