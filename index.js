@@ -53,17 +53,18 @@ oidc.proxy = true;
 
 app.use(cors());
 app.use(admin.options.rootPath, adminRouter);
-app.use(express.json({
-  limit: "100mb",
-  extended: true,
-  parameterLimit: 50000
-}));
 
-app.use(express.urlencoded({
-  limit: "100mb",
-  extended: true,
-  parameterLimit: 50000
-}));
+// app.use(express.json({
+//   limit: "10000kb",
+//   extended: true,
+//   parameterLimit: 50000
+// }));
+
+// app.use(express.urlencoded({
+//   limit: "10000kb",
+//   extended: true,
+//   parameterLimit: 50000
+// }));
 
 app.use("/oidc", oidc.callback(),
   (req, res) => {
