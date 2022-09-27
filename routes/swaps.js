@@ -7,6 +7,7 @@ const uuid = require("uuid-random");
 const fs = require("fs");
 const extFrms = require("ffmpeg-extract-frames");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+const {Swap} = require("../utils/popswap");
 
 if (!fs.existsSync(videoPath)) {
   fs.mkdirSync(videoPath);
@@ -78,6 +79,8 @@ router.get("/onPop", async (req, res) => {
   });
   // res.json(swapIds.map(swapId => `swaps/get?popId=${req.query.popId}&swapId=${swapId}`))
 });
+
+new Swap()
 
 router.use("/", express.static(videoPath));
 
