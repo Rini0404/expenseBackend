@@ -14,7 +14,7 @@ const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 router.post(
   "/",
   fileUpload({
-    createParentPath: true
+    createParentPath: true,
   }),
   async function (req, res) {
     console.log(req.files, req.body);
@@ -33,6 +33,14 @@ router.post(
           createdVidPath = `${videoPath}/${popUUID}/video.mov`;
           console.log("creating new pop", popUUID);
           await file.mv(createdVidPath);
+
+          //temp use local ffmpeg on server to convert to mp4 for playback on android.
+          //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
+
+          await exec(
+            `ffmpeg -i ${videoPath}/${popUUID}/video.mov -vcodec h264 -acodec mp2 ${videoPath}/${popUUID}/video.mp4`
+          );
+
           uploadSuccess = true;
           break;
         }
@@ -50,6 +58,7 @@ router.post(
       offsets: [0],
       ffmpegPath,
     });
+
     res
       .json({
         success: uploadSuccess,
