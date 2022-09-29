@@ -7,7 +7,8 @@ const uuid = require("uuid-random");
 const fs = require("fs");
 const extFrms = require("ffmpeg-extract-frames");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-const {Swap} = require("../utils/popswap");
+const { Swap } = require("../utils/popswap");
+const { exec } = require("node:child_process");
 
 if (!fs.existsSync(videoPath)) {
   fs.mkdirSync(videoPath);
@@ -31,7 +32,15 @@ router.post(
         const file = req.files[elmName];
         if (!(file instanceof Array)) {
           createdVidPath = `${videoPath}/${req.body.popId}/swaps/${swapUUID}.mov`;
+          console.log(createdVidPath);
           await file.mv(createdVidPath);
+
+          //temp use local ffmpeg on server to convert to mp4 for playback on android.
+          //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
+          await exec(
+            `ffmpeg -i ${createdVidPath} -vcodec h264 -acodec mp2 ${createdVidPath}.mp4`
+          );
+
           uploadSuccess = true;
           break;
         }
@@ -80,7 +89,7 @@ router.get("/onPop", async (req, res) => {
   // res.json(swapIds.map(swapId => `swaps/get?popId=${req.query.popId}&swapId=${swapId}`))
 });
 
-new Swap()
+new Swap();
 
 router.use("/", express.static(videoPath));
 
