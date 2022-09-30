@@ -10,44 +10,43 @@ const port = process.env.PORT || 3000;
 
 /** AdminJS Setup */
 // Database
-const connection = require('./config/db.config');
-const adapter = require('./config/mongoAdapter');
-const Users = require('./models/User')
+const connection = require("./config/db.config");
+const adapter = require("./config/mongoAdapter");
+const Users = require("./models/User");
 
-
-AdminJS.registerAdapter(AdminJSMongoose)
+AdminJS.registerAdapter(AdminJSMongoose);
 
 const AdminJSOptions = {
   resources: [Users],
-  rootPath: "/admin"
-}
+  rootPath: "/admin",
+};
 
 const DEFAULT_ADMIN = {
-  email: 'sean@devusol.com',
-  password: '123456',
-}
+  email: "sean@devusol.com",
+  password: "123456",
+};
 
 const authenticate = async (email, password) => {
   if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-    return Promise.resolve(DEFAULT_ADMIN)
+    return Promise.resolve(DEFAULT_ADMIN);
   }
-  return null
-}
+  return null;
+};
 
 const admin = new AdminJS(AdminJSOptions);
-const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
-  admin,
-  {
-    authenticate,
-    cookieName: 'adminjs',
-    cookiePassword: 'sessionsecret',
-  },
-);
+const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
+  authenticate,
+  cookieName: "adminjs",
+  cookiePassword: "sessionsecret",
+});
 
 /** OIDC Provider Setup */
 
-const oidcOptions = require('./config/oidc.config')
-const oidc = new Provider("http://localhost:3000/oidc", { adapter, ...oidcOptions });
+const oidcOptions = require("./config/oidc.config");
+const oidc = new Provider("http://localhost:3000/oidc", {
+  adapter,
+  ...oidcOptions,
+});
 //const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
 oidc.proxy = true;
 
@@ -66,17 +65,14 @@ app.use(admin.options.rootPath, adminRouter);
 //   parameterLimit: 50000
 // }));
 
-app.use("/oidc", oidc.callback(),
-  (req, res) => {
-    console.log(req);
-  }
-);
+app.use("/oidc", oidc.callback(), (req, res) => {
+  console.log(req);
+});
 
 app.use(express.static("./assets"));
 app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
-
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
