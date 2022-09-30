@@ -38,7 +38,7 @@ router.post(
           //temp use local ffmpeg on server to convert to mp4 for playback on android.
           //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
           await exec(
-            `ffmpeg -i ${createdVidPath} -vcodec h264 -acodec mp2 ${createdVidPath}.mp4`
+            `ffmpeg -i ${createdVidPath} -vcodec h264 -vf scale=432:-1 -acodec copy ${createdVidPath}.mp4`
           );
 
           uploadSuccess = true;
