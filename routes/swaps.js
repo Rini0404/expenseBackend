@@ -82,6 +82,8 @@ router.get("/onPop", async (req, res) => {
   }
 
   const swapIds = await fs.promises.readdir(swapDir);
+  console.log(swapIds)
+  
   res.json({
     popId: req.query.popId,
     swaps: swapIds,
