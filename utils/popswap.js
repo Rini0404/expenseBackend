@@ -1,6 +1,23 @@
+
+
 class Swap {
-    constructor(uuid) {
+    childSwaps = [];
+    constructor(uuid, desc, poster, title, parentUUID) {
         this.uuid = uuid;
+        this.desc = desc;
+        this.poster = poster;
+        this.title = title;
+        this.parentUUID = parentUUID;
+    }
+
+    static getByUUID(uuid) {
+        
+    }
+
+    getChild(index) {
+        const uuid = this.childSwaps[index];
+
+        
     }
 }
 
