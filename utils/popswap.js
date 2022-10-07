@@ -2,24 +2,32 @@ const File = require("filec").FileClass;
 
 class Pop {
     childSwaps = [];
-    constructor(uuid, desc, poster, title) {
+    constructor(uuid, description, creator, topic, audience) {
         this.uuid = uuid;
-        this.desc = desc;
-        this.poster = poster;
-        this.title = title;
+        this.description = description;
+        this.creator = creator;
+        this.topic = topic;
+        this.audience = audience;
         this.file = new File(`./popswaps/${uuid}.json`);
     }
 
+    get json() {
+        return {
+            uuid: this.uuid,
+            description: this.description,
+            creator: this.creator,
+            topic: this.topic,
+            parentUUID: this.parentUUID,
+            childSwaps: this.childSwaps
+        };
+    }
+
+    get str() {
+        return JSON.stringify(this.json);
+    }
+
     write() {
-        return this.file.writer().bulkWriter().write(JSON.stringify(
-            {
-                uuid: this.uuid,
-                desc: this.desc,
-                poster: this.poster,
-                title: this.title,
-                parentUUID: this.parentUUID
-            }
-        ));
+        return this.file.writer().bulkWriter().write(this.str);
     }
 
     static async getByUUID(uuid) {
@@ -30,7 +38,7 @@ class Pop {
         }
 
         const d = JSON.parse(await popSwap.reader().read("utf-8"));
-        return new Swap(d.uuid, d.desc, d.poster, d.title, d.parentUUID);
+        return new Swap(d.uuid, d.description, d.creator, d.topic, d.parentUUID);
     }
 
     getChild(index) {
@@ -39,14 +47,14 @@ class Pop {
 }
 
 class Swap extends Pop {
-    constructor(uuid, desc, poster, title, parentUUID) {
-        super(uuid, desc, poster, title);
+    constructor(uuid, description, creator, topic, audience, parentUUID) {
+        super(uuid, description, creator, topic, audience);
         this.parentUUID = parentUUID;
     }
 
     
     get parent() {
-        return Swap.getByUUID(this.parentUUID);
+        return Pop.getByUUID(this.parentUUID);
     }
 }
 
