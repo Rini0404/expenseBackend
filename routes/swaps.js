@@ -32,7 +32,7 @@ router.post(
         const file = req.files[elmName];
         if (!(file instanceof Array)) {
           createdVidPath = `${videoPath}/${req.body.popId}/swaps/${swapUUID}.mov`;
-          console.log(createdVidPath);
+          // console.log(createdVidPath);
           await file.mv(createdVidPath);
 
           //temp use local ffmpeg on server to convert to mp4 for playback on android.

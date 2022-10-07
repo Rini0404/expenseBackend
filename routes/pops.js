@@ -7,6 +7,7 @@ const uuid = require("uuid-random");
 const extFrms = require("ffmpeg-extract-frames");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const { exec } = require("node:child_process");
+const File = require("filec").FileClass;
 // const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
 // @route    POST /pops
@@ -59,6 +60,20 @@ router.post(
       ffmpegPath,
     });
 
+    const data = new File(`${videoPath}/${popUUID}/data.json`);
+    // uuid: this.uuid,
+    // desc: this.desc,
+    // poster: this.poster,
+    // title: this.title,
+    // parentUUID: this.parentUUID
+    data.writer().bulkWriter().write(JSON.stringify({
+      uuid: popUUID,
+      desc: req.body.description,
+      topic: req.body.topic,
+      creator: req.body.creator,
+      audience: req.body.audience
+    }));
+
     res
       .json({
         success: uploadSuccess,
@@ -89,6 +104,14 @@ router.use("/", express.static(videoPath));
 
 router.get("/get", (req, res) => {
   res.sendFile(`${videoPath}/${req.query.popId}/video.mov`);
+});
+
+router.get("/data", async (req, res) => {
+  const jsonStr = await (new File(`${videoPath}/${req.query.popId}/data.json`)
+  .reader()
+  .read("utf-8"));
+  res.type("application/json")
+  .end(jsonStr);
 });
 
 router.get("/childSwaps", (req, res) => {

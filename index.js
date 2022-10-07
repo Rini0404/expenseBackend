@@ -73,6 +73,7 @@ app.use(express.static("./assets"));
 app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
+app.use("/post", require("./routes/postvid"))
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
