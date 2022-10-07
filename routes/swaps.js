@@ -71,7 +71,10 @@ router.post(
 );
 
 router.get("/onPop", async (req, res) => {
+  let swapRet = [],
+    swapTrack;
   const swapDir = `${videoPath}/${req.query.popId}/swaps`;
+
   if (!fs.existsSync(swapDir)) {
     return res
       .json({
@@ -82,14 +85,27 @@ router.get("/onPop", async (req, res) => {
   }
 
   const swapIds = await fs.promises.readdir(swapDir);
-  console.log(swapIds)
-  
-  res.json({
-    popId: req.query.popId,
-    swaps: swapIds,
+
+
+  // seperate the swap ids into two arrays
+  const swapVids = swapIds.filter((swapId) => swapId.includes(".mp4"));
+
+  // remove the file extension from the swap ids
+  swapVids.forEach((swapId, idx) => {
+    swapVids[idx] = swapId.replace(".mov.mp4", "");
   });
-  // res.json(swapIds.map(swapId => `swaps/get?popId=${req.query.popId}&swapId=${swapId}`))
+
+  res.json({ 
+    popId: req.query.popId, 
+    swaps: swapVids,
+  })
+  .end();
+
 });
+
+//   // res.json(swapIds.map(swapId => `swaps/get?popId=${req.query.popId}&swapId=${swapId}`))
+
+
 
 new Swap();
 
