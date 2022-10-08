@@ -32,14 +32,14 @@ router.post(
         const file = req.files[elmName];
         if (!(file instanceof Array)) {
           createdVidPath = `${videoPath}/${req.body.popId}/swaps/${swapUUID}.mov`;
-          console.log(createdVidPath);
+          // console.log(createdVidPath);
           await file.mv(createdVidPath);
 
           //temp use local ffmpeg on server to convert to mp4 for playback on android.
           //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
-          await exec(
+          exec(
             `ffmpeg -i ${createdVidPath} -vcodec h264 -vf scale=432:-1 -acodec copy ${createdVidPath}.mp4`
-          );
+          )
 
           uploadSuccess = true;
           break;
