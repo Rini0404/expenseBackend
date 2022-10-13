@@ -88,7 +88,16 @@ router.post(
 );
 
 router.get("/all", async (req, res) => {
-  res.json({ pops: await getPops() }).end();
+  // return all pops with their data .json files
+  const pops = await getPops();
+  const popData = await Promise.all(pops.map(async (pop) => {
+      const data = new File(`${videoPath}/${pop}/data.json`);
+      return JSON.parse(await data.reader().read());
+  }
+  ));
+
+  res.json({ pops: popData }).end();
+  
 });
 
 router.get("/me", async (req, res) => {
