@@ -29,29 +29,6 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  password: {
-    type: String
-  },
-  avatar: {
-    type: String
-  },
-  date: {
-    type: Date,
-    default: Date.now
-  },
-  role:{
-    type: String
-  },
-  postalcode: {
-    type: String,
-    required: true
-  },
-  country:{
-    type: String
-  },
-  phoneNumber: {
-    type: String
-  },
   geographic: geoSchema
 });
 

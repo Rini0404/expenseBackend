@@ -65,6 +65,9 @@ app.use(admin.options.rootPath, adminRouter);
 //   parameterLimit: 50000
 // }));
 
+// init middleware
+app.use(express.json({ extended: false }));
+
 app.use("/oidc", oidc.callback(), (req, res) => {
   console.log(req);
 });
@@ -74,6 +77,7 @@ app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
 app.use("/post", require("./routes/postvid"));
+app.use("/users", require("./routes/users"));
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
