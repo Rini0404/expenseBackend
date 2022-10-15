@@ -33,17 +33,19 @@ router.post('/', async(req, res) => {
 });
 
 
-// @route   POST api/users/profile
-// @desc    Post the user profile info
-// @access  Public
-
-
-
 // @route   GET api/users/all
 // @desc    get all users route
 // @access  Public
 
-router.get("/all", (req, res) => res.send("users route testing!"));
+router.get("/all", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 
 module.exports = router;
