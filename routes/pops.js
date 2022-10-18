@@ -84,8 +84,7 @@ router.post(
 );
 
 router.get("/all", async (req, res) => {
-
-     // return all pops with their data .json files
+  // return all pops with their data .json files
   const pops = await getPops();
   
   const popData = await Promise.all(pops.map(async (pop) => {
