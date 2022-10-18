@@ -51,6 +51,29 @@ router.get("/all", async (req, res) => {
 });
 
 
+// @route   GET api/users/:id
+// @desc    get user by id
+// @access  Public
+
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+
 module.exports = router;
 
 
