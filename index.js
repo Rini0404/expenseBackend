@@ -89,6 +89,11 @@ app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/views/testpage.html");
 });
 
+app.get("/appauth", (req, res) => {
+  res.sendFile(__dirname + "/views/appauth.html");
+});
+
+
 app.get("*", (req, res) => {
   res.redirect("/admin/login");
 });
