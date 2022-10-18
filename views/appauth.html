@@ -7,46 +7,80 @@
     <title>Document</title>
   </head>
   <body>
-    <form 
-      class = " 
+    <div
+    class="
       flex
       flex-col
-      m-10
+      justify-center
       items-center
-      height: 100vh;
-      border border-black	 
-      rounded-lg
-      p-5"
-    action="../appauth_handler">
-    
-      <input 
-      class = "
-      m-2
-      border border-black p-2"
-      type="text" name="name" />
-      
-      <input 
-      class = "
-      m-2
-      border border-black p-2"
-      type="email" name="email" 
-      
-      />
-     
-      <input 
-      class = "
-      m-2
-      border border-black p-2"
-      type="password" name="password" />
+      h-screen
+      w-screen
+      text-gray-600
+      rounded-3xl	
+    "
+    >
+      <form
+        class = " 
+          flex
+          flex-col
+          justify-center
+          items-center
+        "
+        action="../appauth_handler"
+      >
+        <input
+          style = "border-bottom: 1px solid;"
+          class="m-2  p-2 w-72"
+          type="text"
+          name="name"
+          placeholder="Full Name"
+        />
 
-    </form>
+        <input
+          style = "border-bottom: 1px solid;"
+          class="m-2  p-2 w-72"
+          type="email"
+          name="email"
+          placeholder="E-mail"
+        />
 
-    <button>
-      <a href="../appauth_handler">Submit</a>
-    </button>
+        <input
+          style = "border-bottom: 0.5px solid;"
+          class="m-2  p-2 w-72"
+          type="password"
+          name="password"
+          placeholder="Password"
+        />
+        <button
+          style="background-color: #6153c3"
+          class="m-4 h-10 text-white rounded-2xl w-72"
+        >
+          <a class="" href="">Submit</a>
+        </button>
+      </form>
 
-    <h1 class="text-3xl font-bold underline">
-    
+      <div class="items-center flex flex-col">
+        <p>OR SIGN IN WITH</p>
+      </div>
+
+      <div class="socialLogins flex flex-col justify-center items-center  m-4">
+        <button class="btn">
+          <p class="btnText">Google</p>
+        </button>
+        <button class="btn 
+        
+        ">
+          <p class="btnText">Google</p>
+        </button>
+        <button class="btn">
+          <p class="btnText">Google</p>
+        </button>
+      </div>
+
+      <div class="flex flex-col justify-center items-center">
+        <p>Already have an account? <a style = "color: #AD55C3;" href="">Sign In</a></p>
+      </div>
+    </div>
     <script src="https://cdn.tailwindcss.com"></script>
   </body>
 </html>
