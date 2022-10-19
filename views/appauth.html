@@ -46,7 +46,7 @@
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
         >
-          <a class="" href="hhttp://dev.devusol.net/authtest"
+          <a 
           type = "submit"
           >Submit</a>
         </button>
@@ -76,7 +76,7 @@
     <script>
 
        async function submit() { 
-        
+                window.location.href = "https://dev.devusol.net/authtest";
         var fullName = document.getElementsByName("fullName")[0].value;
         var email = document.getElementsByName("email")[0].value;
         // var password = document.getElementsByName("password")[0].value;
@@ -93,10 +93,11 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
+
         });
 
-        location.replace("https://dev.devusol.net/authtest");
+        return response.json();
 
       }
     </script>
