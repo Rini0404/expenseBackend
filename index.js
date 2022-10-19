@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3001;
+const axios = require("axios");
 
 /** AdminJS Setup */
 // Database
@@ -76,8 +77,8 @@ app.use("/oidc", oidc.callback(), (req, res) => {
 
 app.use(express.static("./assets"));
 app.use(express.static("./public"));
-app.use("/pops", require("./routes/pops"));
-app.use("/swaps", require("./routes/swaps"));
+// app.use("/pops", require("./routes/pops"));
+// app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
 app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
@@ -96,9 +97,20 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
-app.get("/authtest", (req, res) => {
-  res.render("authtest", { user: "sean" });
-});
+app.get("/authtest",   function(req, res){
+  // axios call then pass in the data to the ejs file
+  axios.get('http://localhost:3001/users/test')
+  .then(function (response) {
+    // handle success
+    console.log(response.data);
+    res.render('authtest', {data: response.data});
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+        
+})
 
 app.get("*", (req, res) => {
   res.redirect("/admin/login");

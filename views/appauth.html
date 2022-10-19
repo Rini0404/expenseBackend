@@ -17,13 +17,13 @@
     >
       <form
         class="flex flex-col justify-center items-center"
-        action="../appauth_handler"
+        action="javascript:submit()"
       >
         <input
           style="border-bottom: 1px solid"
           class="m-2 p-2 w-72"
           type="text"
-          name="name"
+          name="fullName"
           placeholder="Full Name"
         />
 
@@ -35,18 +35,20 @@
           placeholder="E-mail"
         />
 
-        <input
+        <!-- <input
           style="border-bottom: 0.5px solid"
           class="m-2 p-2 w-72"
           type="password"
           name="password"
           placeholder="Password"
-        />
+        /> -->
         <button
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
         >
-          <a class="" href="">Submit</a>
+          <a class="" href="http://localhost:3001/authtest"
+          type = "submit"
+          >Submit</a>
         </button>
       </form>
 
@@ -70,6 +72,35 @@
         </p>
       </div>
     </div>
+
+    <script>
+
+       async function submit() { 
+        
+        var fullName = document.getElementsByName("fullName")[0].value;
+        var email = document.getElementsByName("email")[0].value;
+        // var password = document.getElementsByName("password")[0].value;
+
+        var data = {
+          name: fullName,
+          email: email,
+          // password: password,
+        };
+
+        var response = await fetch("http://localhost:3001/users", {
+          // after we post the data, we want to redirect to the authtest page
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        location.replace("http://localhost:3001/authtest");
+
+      }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/main.js"></script>
     
