@@ -7,9 +7,25 @@
     <title>Document</title>
 </head>
 <body>
-    <h1><%= data.name %></h1>
-    <p><%= data.email %></p>
+    <h1 id = "fullName"><%= data.name %></h1>
+    <p id = "email"><%= data.email %></p>
 
+    
+
+    <script>
+        // grab the full name and postmessage it to react native 
+        // const fullName = document.getElementById("fullName").innerHTML;
+        // const email = document.getElementById("email").innerHTML;
+
+        const info = {
+            fullName: fullName,
+            email: email,
+        }
+
+        window.ReactNativeWebView.postMessage(JSON.stringify(info));
+
+
+    </script>
 
 </body>
 </html>
