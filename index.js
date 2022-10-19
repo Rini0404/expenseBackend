@@ -8,6 +8,7 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3001;
 const axios = require("axios");
+const fetch = require("node-fetch");
 
 /** AdminJS Setup */
 // Database
@@ -111,6 +112,112 @@ app.get("/authtest",   function(req, res){
   })
         
 })
+
+
+
+
+app.get("/handle", async function (req, res) {
+  // console.log("post recvd ", req.query);
+
+  const clientSecret = "j2j4X8wbWuWjlQGt";
+  //const state = req.query.state;
+  const clientId = "78u9lqsln6z7j5";
+  const tokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
+  const redirectUrl = "https://dev.devusol.net/handle";
+
+  const data = await fetch(tokenUrl, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64")
+    },
+    body:
+      "grant_type=authorization_code&client_id=" +
+      clientId +
+      "&client_secret=" +
+      clientSecret +
+      "&code=" +
+      req.query.code +
+      "&redirect_uri=" +
+      redirectUrl
+  })
+    .then((httpResponse) => {
+      //console.log(httpResponse);
+      if (httpResponse.ok) {
+        return httpResponse.json();
+      } else {
+        return res.send("Fetch did not succeed");
+      }
+    })
+    .then((json) => {
+      return json;
+    })
+    .catch((err) => console.log(err));
+
+  // console.log("Access Token: ", data.access_token);
+
+  const userInfo = await fetch("https://api.linkedin.com/v2/me", {
+    method: "get",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + data.access_token
+    }
+  })
+    .then((httpResponse) => {
+      //console.log(httpResponse);
+      if (httpResponse.ok) {
+        return httpResponse.json();
+      } else {
+        return res.send("Fetch did not succeed");
+      }
+    })
+    .then((json) => {
+      return json;
+    })
+    .catch((err) => console.log(err));
+
+  // console.log("Data2: ", userInfo);
+
+  const email = await fetch(
+    "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
+    {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + data.access_token
+      }
+    }
+  )
+    .then((httpResponse) => {
+      //console.log(httpResponse);
+      if (httpResponse.ok) {
+        return httpResponse.json();
+      } else {
+        return res.send("Fetch did not succeed");
+      }
+    })
+    .then((json) => {
+      return json;
+    })
+    .catch((err) => console.log(err));
+
+  // console.log("Email: ", email.elements[0]["handle~"].emailAddress);
+
+  const info = {
+    email: email.elements[0]["handle~"].emailAddress,
+    name: userInfo.localizedFirstName + " " + userInfo.localizedLastName,
+    // id: userInfo.id
+  };
+
+  console.log("Info: ", info);
+
+    res.render("authtest", { info })
+});
+
+
+
+
 
 app.get("*", (req, res) => {
   res.redirect("/admin/login");

@@ -58,12 +58,17 @@
 
       <div class="socialLogins flex flex-col justify-center items-center m-4">
         <!-- <div class="g-signin2"></div> -->
-        <button class="btn">
-          <p class="btnText">Google</p>
+        <button
+        style="background-color: #6153c3"
+        class="btn m-4 h-10 text-white rounded-2xl w-72"
+        >
+          <p 
+          class="btnText">Google</p>
         </button>
-        <button class="btn">
-          <p class="btnText">Google</p>
-        </button>
+
+        <a href="" id="start">Start Auth</a>
+
+
       </div>
 
       <div class="flex flex-col justify-center items-center">
@@ -73,11 +78,29 @@
       </div>
     </div>
 
+
+
+
     <script>
+
+      const link = document.querySelector("#start");
+      const array = new Uint16Array(10);
+      const state = self.crypto.randomUUID();
+      console.log(state);
+      //const state = crypto.getRandomValues(16).toString("hex");
+      const clientID = "78u9lqsln6z7j5";
+      const redirectURI = "https://dev.devusol.net/handle";
+
+
+      const authURL = `https://www.linkedin.com/oauth/v2/authorization?client_id=${clientID}&redirect_uri=${encodeURIComponent(
+        redirectURI
+      )}&scope=r_liteprofile%20r_emailaddress&response_type=code&state=${state}`;
+
+      link.href = authURL;
 
        async function submit() { 
 
-        window.location.href = "https://dev.devusol.net/authtest";
+        // window.location.href = "https://dev.devusol.net/authtest";
         var fullName = document.getElementsByName("fullName")[0].value;
         var email = document.getElementsByName("email")[0].value;
         // var password = document.getElementsByName("password")[0].value;
@@ -88,17 +111,17 @@
           // password: password,
         };
 
-        var response = await fetch("https://dev.devusol.net/users", {
-          // after we post the data, we want to redirect to the authtest page
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data)
+        // var response = await fetch("https://dev.devusol.net/users", {
+        //   // after we post the data, we want to redirect to the authtest page
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify(data)
 
-        });
+        // });
 
-        return response.json();
+        // return response.json();
 
       }
 

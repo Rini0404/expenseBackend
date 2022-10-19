@@ -7,22 +7,25 @@
     <title>Document</title>
 </head>
 <body>
-    <h1 id = "fullName"><%= data.name %></h1>
-    <p id = "email"><%= data.email %></p>
+    <h1 id = "fullName"><%= info.name %></h1>
+    <p id = "email"><%= info.email %></p>
 
     
 
     <script>
         // grab the full name and postmessage it to react native 
-        // const fullName = document.getElementById("fullName").innerHTML;
-        // const email = document.getElementById("email").innerHTML;
+        const fullName = document.getElementById("fullName").innerHTML;
+        const email = document.getElementById("email").innerHTML;
 
         const info = {
             fullName: fullName,
             email: email,
         }
 
-        window.ReactNativeWebView.postMessage(JSON.stringify(info));
+        // when message is received from react native, postmessage it to react native   
+        window.addEventListener("load", (event) => {
+            window.ReactNativeWebView.postMessage(JSON.stringify(info));
+        })
 
 
     </script>
