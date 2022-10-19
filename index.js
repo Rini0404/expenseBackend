@@ -99,7 +99,7 @@ app.get("/appauth", (req, res) => {
 
 app.get("/authtest",   function(req, res){
   // axios call then pass in the data to the ejs file
-  axios.get('http://localhost:3001/users/test')
+  axios.get('https://dev.devusol.net/users/test')
   .then(function (response) {
     // handle success
     console.log(response.data);

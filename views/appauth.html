@@ -46,7 +46,7 @@
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
         >
-          <a class="" href="http://localhost:3001/authtest"
+          <a class="" href="hhttp://dev.devusol.net/authtest"
           type = "submit"
           >Submit</a>
         </button>
@@ -87,7 +87,7 @@
           // password: password,
         };
 
-        var response = await fetch("http://localhost:3001/users", {
+        var response = await fetch("https://dev.devusol.net/users", {
           // after we post the data, we want to redirect to the authtest page
           method: "POST",
           headers: {
@@ -96,7 +96,7 @@
           body: JSON.stringify(data),
         });
 
-        location.replace("http://localhost:3001/authtest");
+        location.replace("https://dev.devusol.net/authtest");
 
       }
     </script>
