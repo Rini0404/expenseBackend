@@ -1,54 +1,43 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="google-signin-client_id" content="510294674624-1ucnjvt0hhvjiduhdf952d6uka4h8l0m.apps.googleusercontent.com">
+    <meta
+      name="google-signin-client_id"
+      content="510294674624-1ucnjvt0hhvjiduhdf952d6uka4h8l0m.apps.googleusercontent.com"
+    />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <title>Document</title>
   </head>
   <body>
     <div
-    class="
-      flex
-      flex-col
-      justify-center
-      items-center
-      h-screen
-      w-screen
-      text-gray-600
-      rounded-3xl 
-    "
+      class="flex flex-col justify-center items-center h-screen w-screen text-gray-600 rounded-3xl"
     >
       <form
-        class = " 
-          flex
-          flex-col
-          justify-center
-          items-center
-        "
+        class="flex flex-col justify-center items-center"
         action="../appauth_handler"
       >
         <input
-          style = "border-bottom: 1px solid;"
-          class="m-2  p-2 w-72"
+          style="border-bottom: 1px solid"
+          class="m-2 p-2 w-72"
           type="text"
           name="name"
           placeholder="Full Name"
         />
 
         <input
-          style = "border-bottom: 1px solid;"
-          class="m-2  p-2 w-72"
+          style="border-bottom: 1px solid"
+          class="m-2 p-2 w-72"
           type="email"
           name="email"
           placeholder="E-mail"
         />
 
         <input
-          style = "border-bottom: 0.5px solid;"
-          class="m-2  p-2 w-72"
+          style="border-bottom: 0.5px solid"
+          class="m-2 p-2 w-72"
           type="password"
           name="password"
           placeholder="Password"
@@ -65,22 +54,24 @@
         <p>OR SIGN IN WITH</p>
       </div>
 
-      <div class="socialLogins flex flex-col justify-center items-center  m-4">
-        <div class="g-signin2"></div>
-        <!-- <button class="btn 
-        
-        ">
+      <div class="socialLogins flex flex-col justify-center items-center m-4">
+        <!-- <div class="g-signin2"></div> -->
+        <button class="btn">
           <p class="btnText">Google</p>
         </button>
         <button class="btn">
-          <p class="btnText">Google</p> -->
+          <p class="btnText">Google</p>
         </button>
       </div>
 
       <div class="flex flex-col justify-center items-center">
-        <p>Already have an account? <a style = "color: #AD55C3;" href="">Sign In</a></p>
+        <p>
+          Already have an account? <a style="color: #ad55c3" href="">Sign In</a>
+        </p>
       </div>
     </div>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/main.js"></script>
+    
   </body>
 </html>

@@ -50,6 +50,8 @@ const oidc = new Provider("http://localhost:3000/oidc", {
 //const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
 oidc.proxy = true;
 
+
+app.set('view engine', 'ejs');
 app.use(cors());
 app.use(admin.options.rootPath, adminRouter);
 
@@ -73,6 +75,7 @@ app.use("/oidc", oidc.callback(), (req, res) => {
 });
 
 app.use(express.static("./assets"));
+app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
@@ -93,6 +96,9 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
+app.get("/authtest", (req, res) => {
+  res.render("authtest", { user: "sean" });
+});
 
 app.get("*", (req, res) => {
   res.redirect("/admin/login");
