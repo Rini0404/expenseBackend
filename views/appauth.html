@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="google-signin-client_id"
-      content=" "
-    />
+    <meta name="google-signin-client_id" content=" " />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <title>Document</title>
   </head>
@@ -46,9 +43,7 @@
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
         >
-          <a 
-          type = "submit"
-          >Submit</a>
+          <a type="submit">Submit</a>
         </button>
       </form>
 
@@ -59,17 +54,94 @@
       <div class="socialLogins flex flex-col justify-center items-center m-4">
         <!-- <div class="g-signin2"></div> -->
         <button
-        style="background-color: #6153c3"
-        class="btn m-4 h-10 text-white rounded-2xl w-72"
+          style="background-color: #6153c3"
+          class="btn m-4 h-10 text-white rounded-2xl w-72"
         >
-          <p 
-          class="btnText">Google</p>
+          <p class="btnText">Google</p>
         </button>
 
-        <a href="" id="start">Start Auth</a>
+        <button
+          style="background-color: #6153c3"
+          class="btn m-4 h-10 text-white rounded-2xl w-72">
+          <a href="" id="start">Linked In </a>
+        </button>
 
 
+        <button
+        id="loginBtn"
+          style="background-color: #6153c3"
+          class="btn m-4 h-10 text-white rounded-2xl w-72"
+        >Facebook Login</button>
+        <!-- <div id="response"></div> -->
       </div>
+
+      <script>
+        function getUserData() {
+
+          // relocate with user data
+
+          FB.api("/me", { fields: "name,email,picture" }, (response) => {
+
+            let name = response.name;
+            let email = response.email;
+            let picture = response.picture.data.url;
+
+            let fbData = {
+              name,
+              email,
+              // picture,
+            };
+            
+            console.log(fbData);
+
+            // relocate with user data
+            window.location.href = `https://dev.devusol.net/authtest/?name=${name}&email=${email}`;
+
+          })
+
+        }
+
+        window.fbAsyncInit = () => {
+          //SDK loaded, initialize it
+          FB.init({
+            appId: "3184359635207513",
+            xfbml: true,
+            version: "v14.0",
+          });
+        };
+
+        //load the JavaScript SDK
+        (function (d, s, id) {
+          var js,
+            fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {
+            return;
+          }
+          js = d.createElement(s);
+          js.id = id;
+          js.src = "https://connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        })(document, "script", "facebook-jssdk");
+
+        //add event listener to login button
+        document.getElementById("loginBtn").addEventListener(
+          "click",
+          () => {
+            //do the login
+            FB.login(
+              (response) => {
+                if (response.authResponse) {
+                  //user just authorized your app
+                  document.getElementById("loginBtn").style.display = "none";
+                  getUserData();
+                }
+              },
+              { scope: "email,public_profile", return_scopes: true }
+            );
+          },
+          false
+        );
+      </script>
 
       <div class="flex flex-col justify-center items-center">
         <p>
@@ -78,11 +150,7 @@
       </div>
     </div>
 
-
-
-
     <script>
-
       const link = document.querySelector("#start");
       const array = new Uint16Array(10);
       const state = self.crypto.randomUUID();
@@ -91,15 +159,13 @@
       const clientID = "78u9lqsln6z7j5";
       const redirectURI = "https://dev.devusol.net/handle";
 
-
       const authURL = `https://www.linkedin.com/oauth/v2/authorization?client_id=${clientID}&redirect_uri=${encodeURIComponent(
         redirectURI
       )}&scope=r_liteprofile%20r_emailaddress&response_type=code&state=${state}`;
 
       link.href = authURL;
 
-       async function submit() { 
-
+      async function submit() {
         // window.location.href = "https://dev.devusol.net/authtest";
         var fullName = document.getElementsByName("fullName")[0].value;
         var email = document.getElementsByName("email")[0].value;
@@ -122,13 +188,10 @@
         // });
 
         // return response.json();
-
       }
-
     </script>
-
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/main.js"></script>
-    
   </body>
 </html>

@@ -7,12 +7,26 @@
     <title>Document</title>
 </head>
 <body>
-    <h1 id = "fullName"><%= info.name %></h1>
-    <p id = "email"><%= info.email %></p>
+
+    <h1>hello</h1>
+    <h1 id="fbName"></h1>
+    <h1 id="fbEmail"></h1>
 
     
+    <!-- grab the url data, pnly the name and email-->      
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('name');
+        const myParam2 = urlParams.get('email');
+        document.getElementById("fbName").innerHTML = myParam;
+        document.getElementById("fbEmail").innerHTML = myParam2;
+
+        console.log(myParam);
+        console.log(myParam2);
+    </script>
 
     <script>
+
         // grab the full name and postmessage it to react native 
         const fullName = document.getElementById("fullName").innerHTML;
         const email = document.getElementById("email").innerHTML;
@@ -26,7 +40,6 @@
         window.addEventListener("load", (event) => {
             window.ReactNativeWebView.postMessage(JSON.stringify(info));
         })
-
 
     </script>
 

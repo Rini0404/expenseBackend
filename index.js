@@ -116,6 +116,9 @@ app.get("/authtest",   function(req, res){
 
 
 
+
+
+
 app.get("/handle", async function (req, res) {
   // console.log("post recvd ", req.query);
 
@@ -209,8 +212,6 @@ app.get("/handle", async function (req, res) {
     name: userInfo.localizedFirstName + " " + userInfo.localizedLastName,
     // id: userInfo.id
   };
-
-  console.log("Info: ", info);
 
     res.render("authtest", { info })
 });
