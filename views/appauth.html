@@ -1,61 +1,49 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-signin-client_id" content=" " />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <title>Document</title>
   </head>
   <body>
     <div
-    class="
-      flex
-      flex-col
-      justify-center
-      items-center
-      h-screen
-      w-screen
-      text-gray-600
-      rounded-3xl	
-    "
+      class="flex flex-col justify-center items-center h-screen w-screen text-gray-600 rounded-3xl"
     >
       <form
-        class = " 
-          flex
-          flex-col
-          justify-center
-          items-center
-        "
-        action="../appauth_handler"
+        class="flex flex-col justify-center items-center"
+        action="javascript:submit()"
       >
         <input
-          style = "border-bottom: 1px solid;"
-          class="m-2  p-2 w-72"
+          style="border-bottom: 1px solid"
+          class="m-2 p-2 w-72"
           type="text"
-          name="name"
+          name="fullName"
           placeholder="Full Name"
         />
 
         <input
-          style = "border-bottom: 1px solid;"
-          class="m-2  p-2 w-72"
+          style="border-bottom: 1px solid"
+          class="m-2 p-2 w-72"
           type="email"
           name="email"
           placeholder="E-mail"
         />
 
-        <input
-          style = "border-bottom: 0.5px solid;"
-          class="m-2  p-2 w-72"
+        <!-- <input
+          style="border-bottom: 0.5px solid"
+          class="m-2 p-2 w-72"
           type="password"
           name="password"
           placeholder="Password"
-        />
+        /> -->
         <button
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
         >
-          <a class="" href="">Submit</a>
+          <a type="submit">Submit</a>
         </button>
       </form>
 
@@ -63,24 +51,147 @@
         <p>OR SIGN IN WITH</p>
       </div>
 
-      <div class="socialLogins flex flex-col justify-center items-center  m-4">
-        <button class="btn">
+      <div class="socialLogins flex flex-col justify-center items-center m-4">
+        <!-- <div class="g-signin2"></div> -->
+        <button
+          style="background-color: #6153c3"
+          class="btn m-4 h-10 text-white rounded-2xl w-72"
+        >
           <p class="btnText">Google</p>
         </button>
-        <button class="btn 
-        
-        ">
-          <p class="btnText">Google</p>
+
+        <button
+          style="background-color: #6153c3"
+          class="btn m-4 h-10 text-white rounded-2xl w-72">
+          <a href="" id="start">Linked In </a>
         </button>
-        <button class="btn">
-          <p class="btnText">Google</p>
-        </button>
+
+
+        <button
+        id="loginBtn"
+          style="background-color: #6153c3"
+          class="btn m-4 h-10 text-white rounded-2xl w-72"
+        >Facebook Login</button>
+        <!-- <div id="response"></div> -->
       </div>
 
+      <script>
+        function getUserData() {
+
+          // relocate with user data
+
+          FB.api("/me", { fields: "name,email,picture" }, (response) => {
+
+            let name = response.name;
+            let email = response.email;
+            let picture = response.picture.data.url;
+
+            let fbData = {
+              name,
+              email,
+              // picture,
+            };
+            
+            console.log(fbData);
+
+            // relocate with user data
+            window.location.href = `https://dev.devusol.net/authtest/?name=${name}&email=${email}`;
+
+          })
+
+        }
+
+        window.fbAsyncInit = () => {
+          //SDK loaded, initialize it
+          FB.init({
+            appId: "3184359635207513",
+            xfbml: true,
+            version: "v14.0",
+          });
+        };
+
+        //load the JavaScript SDK
+        (function (d, s, id) {
+          var js,
+            fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {
+            return;
+          }
+          js = d.createElement(s);
+          js.id = id;
+          js.src = "https://connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        })(document, "script", "facebook-jssdk");
+
+        //add event listener to login button
+        document.getElementById("loginBtn").addEventListener(
+          "click",
+          () => {
+            //do the login
+            FB.login(
+              (response) => {
+                if (response.authResponse) {
+                  //user just authorized your app
+                  document.getElementById("loginBtn").style.display = "none";
+                  getUserData();
+                }
+              },
+              { scope: "email,public_profile", return_scopes: true }
+            );
+          },
+          false
+        );
+      </script>
+
       <div class="flex flex-col justify-center items-center">
-        <p>Already have an account? <a style = "color: #AD55C3;" href="">Sign In</a></p>
+        <p>
+          Already have an account? <a style="color: #ad55c3" href="">Sign In</a>
+        </p>
       </div>
     </div>
+
+    <script>
+      const link = document.querySelector("#start");
+      const array = new Uint16Array(10);
+      const state = self.crypto.randomUUID();
+      console.log(state);
+      //const state = crypto.getRandomValues(16).toString("hex");
+      const clientID = "78u9lqsln6z7j5";
+      const redirectURI = "https://dev.devusol.net/handle";
+
+      const authURL = `https://www.linkedin.com/oauth/v2/authorization?client_id=${clientID}&redirect_uri=${encodeURIComponent(
+        redirectURI
+      )}&scope=r_liteprofile%20r_emailaddress&response_type=code&state=${state}`;
+
+      link.href = authURL;
+
+      async function submit() {
+        // window.location.href = "https://dev.devusol.net/authtest";
+        var fullName = document.getElementsByName("fullName")[0].value;
+        var email = document.getElementsByName("email")[0].value;
+        // var password = document.getElementsByName("password")[0].value;
+
+        var data = {
+          name: fullName,
+          email: email,
+          // password: password,
+        };
+
+        // var response = await fetch("https://dev.devusol.net/users", {
+        //   // after we post the data, we want to redirect to the authtest page
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify(data)
+
+        // });
+
+        // return response.json();
+      }
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>

@@ -32,6 +32,12 @@ router.post('/', async(req, res) => {
 
 });
 
+router.get("/test", async (req, res) => {
+  // get the latest user from the database
+  const user = await User.findOne().sort({ _id: -1 });
+  res.json(user);
+  
+})
 
 // @route   GET api/users/all
 // @desc    get all users route

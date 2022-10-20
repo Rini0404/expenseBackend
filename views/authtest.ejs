@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>hello</h1>
+    <h1 id="fbName"></h1>
+    <h1 id="fbEmail"></h1>
+
+    
+    <!-- grab the url data, pnly the name and email-->      
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('name');
+        const myParam2 = urlParams.get('email');
+        document.getElementById("fbName").innerHTML = myParam;
+        document.getElementById("fbEmail").innerHTML = myParam2;
+
+        console.log(myParam);
+        console.log(myParam2);
+    </script>
+
+    <script>
+
+        // grab the full name and postmessage it to react native 
+        const fullName = document.getElementById("fullName").innerHTML;
+        const email = document.getElementById("email").innerHTML;
+
+        const info = {
+            fullName: fullName,
+            email: email,
+        }
+
+        // when message is received from react native, postmessage it to react native   
+        window.addEventListener("load", (event) => {
+            window.ReactNativeWebView.postMessage(JSON.stringify(info));
+        })
+
+    </script>
+
+</body>
+</html>
