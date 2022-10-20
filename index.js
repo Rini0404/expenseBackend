@@ -52,8 +52,7 @@ const oidc = new Provider("http://localhost:3000/oidc", {
 //const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
 oidc.proxy = true;
 
-
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.use(cors());
 app.use(admin.options.rootPath, adminRouter);
 
@@ -98,26 +97,63 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
-app.get("/authtest",   function(req, res){
+app.get("/authtest", function (req, res) {
   // axios call then pass in the data to the ejs file
-  axios.get('https://dev.devusol.net/users/test')
-  .then(function (response) {
-    // handle success
-    console.log(response.data);
-    res.render('authtest', {data: response.data});
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-        
-})
+  axios
+    .get("https://dev.devusol.net/users/test")
+    .then(function (response) {
+      // handle success
+      console.log(response.data);
+      res.render("authtest", { data: response.data });
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    });
+});
+
+app.get("/fbHandle", async (req, res) => {
+  let redirectURIfb = "https://dev.devusol.net/fbHandle";
+  let appSecrete = `5f155c61526fbfdd589770129adbb9c6`;
+  let fbId = `3184359635207513`;
+  let fbTokenUrl = `https://graph.facebook.com/v10.0/oauth/access_token?client_id=${fbId}&redirect_uri=${redirectURIfb}&client_secret=${appSecrete}&code=${req.query.code}`;
+
+  const { code } = req.query;
+
+  const fbToken = await fetch(fbTokenUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${code}`,
+    }
+  },
+  );
+  const fbTokenJson = await fbToken.json();
+
+  const fbProfileUrl = `https://graph.facebook.com/me?fields=picture,name,email&access_token=${fbTokenJson.access_token}`;
+
+  const getFbInfo = await fetch(fbProfileUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${fbTokenJson.access_token}`,
+    }
+  },
+  );
+  const fbInfoJson = await getFbInfo.json();
+
+ let fbPic = fbInfoJson.picture.data.url;
 
 
+  let socialInfo = {
+    name: fbInfoJson.name,
+    email: fbInfoJson.email,
+    picture: fbPic,
+  };
 
+  res.render("authtest", { socialInfo });
 
-
-
+});
 
 app.get("/handle", async function (req, res) {
   // console.log("post recvd ", req.query);
@@ -133,7 +169,8 @@ app.get("/handle", async function (req, res) {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization:
-        "Basic " + Buffer.from(clientId + ":" + clientSecret).toString("base64")
+        "Basic " +
+        Buffer.from(clientId + ":" + clientSecret).toString("base64"),
     },
     body:
       "grant_type=authorization_code&client_id=" +
@@ -143,7 +180,7 @@ app.get("/handle", async function (req, res) {
       "&code=" +
       req.query.code +
       "&redirect_uri=" +
-      redirectUrl
+      redirectUrl,
   })
     .then((httpResponse) => {
       //console.log(httpResponse);
@@ -164,8 +201,8 @@ app.get("/handle", async function (req, res) {
     method: "get",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + data.access_token
-    }
+      Authorization: "Bearer " + data.access_token,
+    },
   })
     .then((httpResponse) => {
       //console.log(httpResponse);
@@ -188,8 +225,8 @@ app.get("/handle", async function (req, res) {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + data.access_token
-      }
+        Authorization: "Bearer " + data.access_token,
+      },
     }
   )
     .then((httpResponse) => {
@@ -207,18 +244,14 @@ app.get("/handle", async function (req, res) {
 
   // console.log("Email: ", email.elements[0]["handle~"].emailAddress);
 
-  const info = {
+  const socialInfo = {
     email: email.elements[0]["handle~"].emailAddress,
     name: userInfo.localizedFirstName + " " + userInfo.localizedLastName,
     // id: userInfo.id
   };
 
-    res.render("authtest", { info })
+  res.render("authtest", { socialInfo });
 });
-
-
-
-
 
 app.get("*", (req, res) => {
   res.redirect("/admin/login");

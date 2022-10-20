@@ -52,13 +52,7 @@
       </div>
 
       <div class="socialLogins flex flex-col justify-center items-center m-4">
-        <!-- <div class="g-signin2"></div> -->
-        <button
-          style="background-color: #6153c3"
-          class="btn m-4 h-10 text-white rounded-2xl w-72"
-        >
-          <p class="btnText">Google</p>
-        </button>
+
 
         <button
           style="background-color: #6153c3"
@@ -66,81 +60,22 @@
           <a href="" id="start">Linked In </a>
         </button>
 
+        <a href="" id="loginBtn"> FaceBook </a>
 
-        <button
-        id="loginBtn"
-          style="background-color: #6153c3"
-          class="btn m-4 h-10 text-white rounded-2xl w-72"
-        >Facebook Login</button>
-        <!-- <div id="response"></div> -->
+        
       </div>
 
       <script>
-        function getUserData() {
+          
+          // grab button
+          var loginBtn = document.getElementById("loginBtn");
 
-          // relocate with user data
+          let redirectURIfb = "https://dev.devusol.net/fbHandle";
 
-          FB.api("/me", { fields: "name,email,picture" }, (response) => {
+          fbAuthUrl = `https://www.facebook.com/v15.0/dialog/oauth?client_id=3184359635207513&redirect_uri=&redirect_uri=${encodeURIComponent(redirectURIfb)}&state=st=state123abc,ds=123456789`;
 
-            let name = response.name;
-            let email = response.email;
-            let picture = response.picture.data.url;
-
-            let fbData = {
-              name,
-              email,
-              // picture,
-            };
-            
-            console.log(fbData);
-
-            // relocate with user data
-            window.location.href = `https://dev.devusol.net/authtest/?name=${name}&email=${email}`;
-
-          })
-
-        }
-
-        window.fbAsyncInit = () => {
-          //SDK loaded, initialize it
-          FB.init({
-            appId: "3184359635207513",
-            xfbml: true,
-            version: "v14.0",
-          });
-        };
-
-        //load the JavaScript SDK
-        (function (d, s, id) {
-          var js,
-            fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {
-            return;
-          }
-          js = d.createElement(s);
-          js.id = id;
-          js.src = "https://connect.facebook.net/en_US/sdk.js";
-          fjs.parentNode.insertBefore(js, fjs);
-        })(document, "script", "facebook-jssdk");
-
-        //add event listener to login button
-        document.getElementById("loginBtn").addEventListener(
-          "click",
-          () => {
-            //do the login
-            FB.login(
-              (response) => {
-                if (response.authResponse) {
-                  //user just authorized your app
-                  document.getElementById("loginBtn").style.display = "none";
-                  getUserData();
-                }
-              },
-              { scope: "email,public_profile", return_scopes: true }
-            );
-          },
-          false
-        );
+          loginBtn.href = fbAuthUrl;
+          
       </script>
 
       <div class="flex flex-col justify-center items-center">
