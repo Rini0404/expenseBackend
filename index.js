@@ -84,6 +84,7 @@ app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
 app.use("/profile", require("./routes/profile"));
 app.use("/auth", require("./routes/auth"));
+app.use("/social", require("./routes/Social"));
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
@@ -152,7 +153,18 @@ app.get("/fbHandle", async (req, res) => {
     picture: fbPic,
   };
 
-  res.render("authtest", { socialInfo });
+  axios
+    .post("https://dev.devusol.net/social/", socialInfo)
+    .then(function (response) {
+      // handle success
+      console.log(response.data.token);
+      res.render("authtest", { socialInfo });
+    }
+    )
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    });
 
 });
 
@@ -196,7 +208,6 @@ app.get("/handle", async function (req, res) {
     })
     .catch((err) => console.log(err));
 
-  // console.log("Access Token: ", data.access_token);
 
   const userInfo = await fetch("https://api.linkedin.com/v2/me", {
     method: "get",
@@ -251,7 +262,21 @@ app.get("/handle", async function (req, res) {
     // id: userInfo.id
   };
 
-  res.render("authtest", { socialInfo });
+  // create the user in the database
+   axios
+    .post("https://dev.devusol.net/social/", socialInfo)
+    .then(function (response) {
+      // handle success
+      console.log(response.data.token);
+      res.render("authtest", { socialInfo });
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    });
+
+
+  // res.render("authtest", { socialInfo });
 });
 
 app.get("*", (req, res) => {

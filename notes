@@ -1,0 +1,10 @@
+    <% if (socialInfo) { %>
+        <h1>Facebook Info</h1>
+        <p id = "socialName" ><%= socialInfo.name %></p>
+        <p id = "socialEmail"><%= socialInfo.email %></p>
+        <p id = "socialPicture"><%= socialInfo.picture %></p>
+    <% } 
+    else { %> <h1>No info </h1> <% }
+        
+    %>
+    

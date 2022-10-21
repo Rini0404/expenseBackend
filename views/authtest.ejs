@@ -13,7 +13,7 @@
     <!-- if we get back fbUserInfo, display it other wise, display info -->
 
     <% if (socialInfo) { %>
-        <h1>Facebook Info</h1>
+        <h1>USER INFO</h1>
         <p id = "socialName" ><%= socialInfo.name %></p>
         <p id = "socialEmail"><%= socialInfo.email %></p>
         <p id = "socialPicture"><%= socialInfo.picture %></p>
@@ -42,11 +42,9 @@
             picture: picture
         }
 
-        console.log("TEST : ", JSON.parse(JSON.stringify(info)));
-
         // when message is received from react native, postmessage it to react native   
         window.addEventListener("load", (event) => {
-            window.ReactNativeWebView.postMessage(JSON.stringify(info));
+            window.ReactNativeWebView.postMessage((JSON.parse(JSON.stringify(info))));
         })
 
     </script>
