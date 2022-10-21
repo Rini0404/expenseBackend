@@ -8,44 +8,63 @@
 </head>
 <body>
 
-    <h1>hello</h1>
+   
+    <div class="container">
+        <h1>
+            Here is our Policy: 
+        </h1>
+        <p>
+            <a href="https://dev.devusol.net/Policy">Privacy Policy</a>
+        </p>
 
+        if you wish to continue, please click the button below:
+        <button 
+        onclick = "registerUser()"
+        type = "submit">Continue</button>
+
+      </div>
+
+
+  
     <!-- if we get back fbUserInfo, display it other wise, display info -->
 
     <% if (socialInfo) { %>
-        <h1>USER INFO</h1>
+        <p>USER INFO</p>
         <p id = "socialName" ><%= socialInfo.name %></p>
         <p id = "socialEmail"><%= socialInfo.email %></p>
-        <p id = "socialPicture"><%= socialInfo.picture %></p>
     <% } 
     else { %> <h1>No info </h1> <% }
         
     %>
-    
 
-
-    
-    <!-- grab the url data, pnly the name and email-->      
-    <script>
-    </script>
 
     <script>
 
         // grab the full name and postmessage it to react native 
-        const fullName = document.getElementById("socialName").innerHTML;
+        const name = document.getElementById("socialName").innerHTML;
         const email = document.getElementById("socialEmail").innerHTML;
-        const picture = document.getElementById("socialPicture").innerHTML;
 
         const info = {
-            fullName: fullName,
+            name: name,
             email: email,
-            picture: picture
         }
 
-        // when message is received from react native, postmessage it to react native   
-        window.addEventListener("load", (event) => {
-            window.ReactNativeWebView.postMessage((JSON.parse(JSON.stringify(info))));
-        })
+        // swhen the submit button is clicked fetch post 
+
+        async function registerUser() {
+            const response = await fetch("https://dev.devusol.net/social/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(info),
+            });
+            const data = await response.json();
+            console.log("TOKENENENENNE:  ", data.token);
+            window.ReactNativeWebView.postMessage(JSON.parse(JSON.stringify(data.token)));
+            
+        }
+
 
     </script>
 

@@ -148,27 +148,17 @@ app.get("/fbHandle", async (req, res) => {
   );
   const fbInfoJson = await getFbInfo.json();
 
- let fbPic = fbInfoJson.picture.data.url;
+//  let fbPic = fbInfoJson.picture.data.url;
 
 
   let socialInfo = {
     name: fbInfoJson.name,
     email: fbInfoJson.email,
-    picture: fbPic,
+    // picture: fbPic,
   };
 
-  axios
-    .post("https://dev.devusol.net/social/", socialInfo)
-    .then(function (response) {
-      // handle success
-      console.log(response.data.token);
-      res.render("authtest", { socialInfo });
-    }
-    )
-    .catch(function (error) {
-      // handle error
-      console.log(error);
-    });
+  
+  res.render("authtest", { socialInfo });
 
 });
 
@@ -266,21 +256,8 @@ app.get("/handle", async function (req, res) {
     // id: userInfo.id
   };
 
-  // create the user in the database
-   axios
-    .post("https://dev.devusol.net/social/", socialInfo)
-    .then(function (response) {
-      // handle success
-      console.log(response.data.token);
-      res.render("authtest", { socialInfo });
-    })
-    .catch(function (error) {
-      // handle error
-      console.log(error);
-    });
 
-
-  // res.render("authtest", { socialInfo });
+  res.render("authtest", { socialInfo });
 });
 
 app.get("*", (req, res) => {
