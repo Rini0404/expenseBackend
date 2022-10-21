@@ -83,6 +83,7 @@ app.use("/gdrive", require("./utils/googledriveHandler"));
 app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
 app.use("/profile", require("./routes/profile"));
+app.use("/auth", require("./routes/auth"));
 
 app.get("/", (req, res) => {
   // console.log(req.query, );

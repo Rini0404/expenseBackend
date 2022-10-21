@@ -32,13 +32,13 @@
           placeholder="E-mail"
         />
 
-        <!-- <input
+        <input
           style="border-bottom: 0.5px solid"
           class="m-2 p-2 w-72"
           type="password"
           name="password"
           placeholder="Password"
-        /> -->
+        />
         <button
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
@@ -60,9 +60,12 @@
           <a href="" id="start">Linked In </a>
         </button>
 
+        <button
+          style="background-color: #6153c3"
+          class="btn m-2 h-10 text-white rounded-2xl w-72">
         <a href="" id="loginBtn"> FaceBook </a>
+        </button> 
 
-        
       </div>
 
       <script>
@@ -104,25 +107,25 @@
         // window.location.href = "https://dev.devusol.net/authtest";
         var fullName = document.getElementsByName("fullName")[0].value;
         var email = document.getElementsByName("email")[0].value;
-        // var password = document.getElementsByName("password")[0].value;
+        var password = document.getElementsByName("password")[0].value;
 
         var data = {
           name: fullName,
           email: email,
-          // password: password,
+          password: password,
         };
 
-        // var response = await fetch("https://dev.devusol.net/users", {
-        //   // after we post the data, we want to redirect to the authtest page
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify(data)
+        var response = await fetch("https://dev.devusol.net/users", {
+          // after we post the data, we want to redirect to the authtest page
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data)
 
-        // });
+        });
 
-        // return response.json();
+        return response.json();
       }
     </script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
