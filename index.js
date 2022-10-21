@@ -99,6 +99,10 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
+app.get("/policy", (req, res) => {
+  res.sendFile(__dirname + "/views/Policy.html");
+})
+
 app.get("/authtest", function (req, res) {
   // axios call then pass in the data to the ejs file
   axios

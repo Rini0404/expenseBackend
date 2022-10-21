@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-signin-client_id" content=" " />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <title>Document</title>
+    <title>Vox Poppin</title>
   </head>
   <body>
     <div
@@ -40,19 +40,21 @@
           placeholder="Password"
         />
 
-        <div
-          class="flex flex-row justify-center items-center w-72 m-2 p-2"
-        >
-    
-          
+        <div class="flex items-center m-4">
+          <input  id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <label for="checked-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Agree To</label>
+          <a href="https://dev.devusol.net/Policy" class="ml-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">Our Terms</a>
+      </div>
+        
+
           <button
+          id = "save" 
           style="background-color: #6153c3"
           class="m-4 h-10 text-white rounded-2xl w-72"
           >
           <a type="submit">Submit</a>
         </button>
         
-      </div>
       
       </form>
 
@@ -130,6 +132,18 @@
 
         window.ReactNativeWebView.postMessage(JSON.parse(JSON.stringify(result.token)));
       }
+
+      // if the checked boc is not checked, dont let the user submit
+      const save = document.querySelector("#save");
+      const checkbox = document.querySelector("#checked-checkbox");
+
+      save.addEventListener("click", (e) => {
+        if (!checkbox.checked) {
+          e.preventDefault();
+          alert("Please agree to our terms");
+        }
+      });
+
     </script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
