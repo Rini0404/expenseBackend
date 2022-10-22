@@ -6,7 +6,7 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const axios = require("axios");
 const fetch = require("node-fetch");
 const Hls = require("hls-server");
@@ -17,11 +17,13 @@ const fs = require("fs");
 const connection = require("./config/db.config");
 const adapter = require("./config/mongoAdapter");
 const Users = require("./models/User");
+const Profile = require("./models/Profile");
+const { Pop, Swap } = require("./models/PopSwapSchema");
 
 AdminJS.registerAdapter(AdminJSMongoose);
 
 const AdminJSOptions = {
-  resources: [Users],
+  resources: [Users, Profile, Pop, Swap],
   rootPath: "/admin",
 };
 
@@ -171,8 +173,6 @@ app.get("/fbSignin", async (req, res) => {
   });
 
   const resResult = await response.data;
-
-  // console.log(resResult);
 
   res.redirect(`https://dev.devusol.net/loginAuth?token=${resResult.token}`);
 
