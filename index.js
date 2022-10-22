@@ -6,9 +6,11 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const axios = require("axios");
 const fetch = require("node-fetch");
+const Hls = require("hls-server");
+const fs = require("fs");
 
 /** AdminJS Setup */
 // Database
@@ -45,6 +47,7 @@ const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
 /** OIDC Provider Setup */
 
 const oidcOptions = require("./config/oidc.config");
+// const { default: checkBox } = require("@adminjs/design-system/types/atoms/check-box");
 const oidc = new Provider("http://localhost:3000/oidc", {
   adapter,
   ...oidcOptions,
@@ -77,10 +80,10 @@ app.use("/oidc", oidc.callback(), (req, res) => {
 
 app.use(express.static("./assets"));
 app.use(express.static("./public"));
-// app.use("/pops", require("./routes/pops"));
+app.use("/pops", require("./routes/pops"));
 // app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
-app.use("/post", require("./routes/postvid"));
+// app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
 app.use("/profile", require("./routes/profile"));
 app.use("/auth", require("./routes/auth"));
@@ -264,9 +267,37 @@ app.get("*", (req, res) => {
   res.redirect("/admin/login");
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+const hlsServer = new Hls(server, {
+  provider: {
+    exists: (req, cb) => {
+      const ext = req.url.split(".").pop;
+      
+      if(ext != "m3u8" && ext != "ts") {
+        return cb(null, true);
+      }
+      fs.access(`${__dirname}/assets/${req.url}`, fs.constants.F_OK, function (er) {
+        if(er) {
+          console.log("unable to find file");
+          return cb(null, false);
+        }
+        cb(null, true);
+      });
+    },
+    getManifestStream: (req, cb) => {
+      const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`);
+      cb(null, stream);
+    },
+    getSegmentStream: (req, cb) => {
+      const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`);
+      cb(null, stream);
+    }
+  }
+});
+// hlsServer.
 
 // function getVideos() {
 //   return fs.promises.readdir("./assets/video");
