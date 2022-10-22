@@ -1,18 +1,32 @@
 const express = require("express");
 const router = express.Router();
 const fileUpload = require("express-fileupload");
-const { getPops } = require("../utils/fsHandlers");
+const { getPops, convertPopSwap } = require("../utils/popswapsutil");
 const videoPath = "./assets/pops";
 const uuid = require("uuid-random");
 const extFrms = require("ffmpeg-extract-frames");
+const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const { exec } = require("node:child_process");
-const File = require("filec").FileClass;
+const { Pop } = require("../models/PopSwapSchema");
+const fs = require("fs");
 // const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
 // @route    POST /pops
 // @desc     Save uploads to assets/pops/[uuid].mov
 // @access   Public
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+
+if (!fs.existsSync(videoPath)) {
+  fs.mkdirSync(videoPath);
+}
+
+// router.get("/", (req, res) => {
+
+// });
+
+
 router.post(
   "/",
   fileUpload({
@@ -38,9 +52,23 @@ router.post(
 
           //temp use local ffmpeg on server to convert to mp4 for playback on android.
           //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
-          await exec(
-            `ffmpeg -i ${videoPath}/${popUUID}/video.mov -vcodec h264 -vf scale=448:-1 -acodec copy ${videoPath}/${popUUID}/video.mp4`
-          );
+          ffmpeg(createdVidPath, {timeout: 432000 })
+          .addOptions([
+            "-profile:v baseline",
+            "-level 3.0",
+            "-start_number 0",
+            "-hls_time 1",
+            "-hls_list_size 0",
+            "-f hls"
+          ])
+          .output(`${videoPath}/${popUUID}/output.m3u8`)
+          .on("end", () => {
+            console.log("ended");
+          })
+          .run();
+          // await exec(
+          //   `${ffmpegPath} -i ${videoPath}/${popUUID}/video.mov -vcodec h264 -vf scale=448:-1 -acodec copy ${videoPath}/${popUUID}/video.mp4`
+          // );
 
           uploadSuccess = true;
           break;
@@ -60,22 +88,38 @@ router.post(
       ffmpegPath,
     });
 
-    const data = new File(`${videoPath}/${popUUID}/data.json`);
-
-    data.writer().bulkWriter().write(JSON.stringify({
-      uuid: popUUID,
+    /*
+       uuid: popUUID,
       desc: req.body.description,
       topic: req.body.topic,
       creator: req.body.creator,
       audience: req.body.audience
-    }));
+ */
+
+    const pop = new Pop({
+      uuid: popUUID,
+      description: req.body.description,
+      topic: req.body.topic,
+      creator: req.body.creator || "no user",
+      audience: req.body.audience,
+      childSwapIds: []
+    });
+
+    try {
+      pop.save();
+    } catch(e) {
+      console.log("error saving pop...\n\n\n",e);
+      fs.unlinkSync(`${videoPath}/${popUUID}`);
+    }
+
+    
 
     res
       .json({
         success: uploadSuccess,
         recent_upload: popUUID,
         thumb: `pops/${popUUID}/thumb.jpg`,
-        pops: (await getPops()).map((vidName) => `pops/${vidName}`),
+        pops: convertPopSwap(await getPops()),
       })
       .end();
 
@@ -83,41 +127,50 @@ router.post(
   }
 );
 
-router.get("/all", async (req, res) => {
-  // return all pops with their data .json files
-  const pops = await getPops();
+// router.get(/.*\/video\.(mov|mp4)\/?$/, (req, res) => {
   
-  const popData = await Promise.all(pops.map(async (pop) => {
-    const data = new File(`${videoPath}/${pop}/data.json`);
-    return JSON.parse(await data.reader().read());
-  }
-  ))
-
-  return res.json(popData);
-  
-});
-
-router.get("/me", async (req, res) => {
-  res.json({ pops: await getPops() }).end();
-});
-
-// router.get("/", (req, res) => {
-//     console.log(req.url);
-//     res.sendFile(`${videoPath}/`)
 // });
 
-router.use("/", express.static(videoPath));
+router.get("/all", async (req, res) => {
+  const pops = await getPops();
+  return res.json(convertPopSwap(pops));
+});
+
+
+registerSearch("creator", "topic", "audience", "uuid");
+
+function registerSearch(...names) {
+  for(const name of names) {
+    router.get("/search", async (req, res, next) => {
+      if(!req.query[name]) {
+        next();
+        return;
+      }
+      const pops = await Pop.find({
+        [name]: req.query[name]
+      });
+      res.json(convertPopSwap(pops));
+    });
+  }
+}
 
 router.get("/get", (req, res) => {
-  res.sendFile(`${videoPath}/${req.query.popId}/video.mov`);
+  res.sendFile(`${__dirname.split("routes")[0]}/assets/pops/${req.query.popId}/video.mov`);
 });
 
 router.get("/data", async (req, res) => {
-  const jsonStr = await (new File(`${videoPath}/${req.query.popId}/data.json`)
-  .reader()
-  .read("utf-8"));
-  res.type("application/json")
-  .end(jsonStr);
+  const pop = await Pop.findOne({
+    uuid: req.query.popId
+  });
+  if(pop.length) {
+    res.json(convertPopSwap(pop));
+  } else {
+    res.status(500).json(
+    {
+      error: true,
+      reason: "no video with id " + req.query.popId
+    })
+  }
 });
 
 router.get("/childSwaps", (req, res) => {
