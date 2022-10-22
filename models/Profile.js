@@ -18,12 +18,12 @@ const ProfileSchema = new mongoose.Schema({
   zip: {
     type: String
   },
-  pic: { 
-    type: String
-  },
-  cover : { 
-    type: String
-  },
+  // pic: { 
+  //   type: String
+  // },
+  // cover : { 
+  //   type: String
+  // },
 });
 
 module.exports = mongoose.model('profile', ProfileSchema);
