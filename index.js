@@ -85,6 +85,7 @@ app.use("/users", require("./routes/users"));
 app.use("/profile", require("./routes/profile"));
 app.use("/auth", require("./routes/auth"));
 app.use("/social", require("./routes/Social"));
+app.use("/socialauth", require("./routes/SocialAuth"));
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
@@ -121,6 +122,59 @@ app.get("/authtest", function (req, res) {
       console.log(error);
     });
 });
+
+app.get("/fbSignin", async (req, res) => {
+  let redirectURIfb = "https://dev.devusol.net/fbSignin";
+  let appSecrete = `5f155c61526fbfdd589770129adbb9c6`;
+  let fbId = `3184359635207513`;
+  let fbTokenUrl = `https://graph.facebook.com/v10.0/oauth/access_token?client_id=${fbId}&redirect_uri=${redirectURIfb}&client_secret=${appSecrete}&code=${req.query.code}`;
+
+  const { code } = req.query;
+  
+  const fbToken = await fetch(fbTokenUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${code}`,
+    }
+  },
+  );
+  const fbTokenJson = await fbToken.json();
+
+  const fbProfileUrl = `https://graph.facebook.com/me?fields=name,email&access_token=${fbTokenJson.access_token}`;
+
+  const getFbInfo = await fetch(fbProfileUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${fbTokenJson.access_token}`,
+    }
+  },
+  );
+  const fbInfoJson = await getFbInfo.json();
+
+  console.log(fbInfoJson);
+
+  // login user with fb info
+
+  const response = await axios.post("https://dev.devusol.net/socialauth", fbInfoJson, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .catch((err) => {
+    console.log(err);
+    return err;
+  });
+
+  const resResult = await response.data;
+
+  // console.log(resResult);
+
+  res.redirect(`https://dev.devusol.net/loginAuth?token=${resResult.token}`);
+
+})
+
 
 app.get("/fbHandle", async (req, res) => {
   let redirectURIfb = "https://dev.devusol.net/fbHandle";
