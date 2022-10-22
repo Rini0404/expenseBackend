@@ -12,13 +12,15 @@
 <body>
 
   <div class="container d-flex justify-content-center align-items-center 
+  mt-2 
+  mb-1
     flex-column">
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <div class="card">
-          <div class="card-header">
+          <!-- <div class="card-header">
             <h3>Sign In</h3>
-          </div>
+          </div> -->
           <div class="card-body">
             <form action="javascript:submit()">
               <div class="form-group
@@ -33,7 +35,12 @@
               </div>
               <div class="form-group
               ">
-                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                <button 
+                style = "flex: flex; justify-content: center; align-items: center; background-color: #6153c3; color: white; border-radius: 5px; border: none; padding: 10px 20px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;"
+                id = "save"
+                type="submit" 
+                class="btn btn-primary btn-block"
+                >Sign In</button>
               </div>
             </form>
           </div>
@@ -41,6 +48,50 @@
       </div>
     </div>
   </div>
+
+  <script>
+
+    const submit = async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const save = document.getElementById('save');
+      save.innerHTML = 'Loading...';
+      save.disabled = true;
+      const response = await fetch('https://dev.devusol.net/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+        
+      })
+      const result = await response.json();
+      // console.log(response.status);
+      if(response.status === 200) {
+        // send the token to react native
+        window.ReactNativeWebView.postMessage(JSON.parse(JSON.stringify(result.token)));
+
+        save.innerHTML = 'Sign In';
+        save.disabled = false;
+      } else {
+        save.innerHTML = 'Sign In';
+        save.disabled = false;
+        alert("Login Failed");
+      }
+    }
+
+    // function submit() {
+    //     const email = document.getElementById("email").value;
+    //     const password = document.getElementById("password").value;
+    //     const data = {
+    //       email,
+    //       password,
+    //     };
+        
+    </script>
 
 
   <!-- JavaScript Bundle with Popper -->
