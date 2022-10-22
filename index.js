@@ -99,6 +99,10 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
+app.get("/loginAuth", (req, res) => {
+  res.sendFile(__dirname + "/views/loginAuth.html");
+});
+
 app.get("/policy", (req, res) => {
   res.sendFile(__dirname + "/views/Policy.html");
 })

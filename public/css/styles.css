@@ -1,0 +1,7 @@
+.container { 
+  /* set to the middle of screen */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  
+}
