@@ -83,6 +83,8 @@ app.use("/gdrive", require("./utils/googledriveHandler"));
 app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
 app.use("/profile", require("./routes/profile"));
+app.use("/auth", require("./routes/auth"));
+app.use("/social", require("./routes/Social"));
 
 app.get("/", (req, res) => {
   // console.log(req.query, );
@@ -96,6 +98,10 @@ app.get("/test", (req, res) => {
 app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
+
+app.get("/policy", (req, res) => {
+  res.sendFile(__dirname + "/views/Policy.html");
+})
 
 app.get("/authtest", function (req, res) {
   // axios call then pass in the data to the ejs file
@@ -142,15 +148,16 @@ app.get("/fbHandle", async (req, res) => {
   );
   const fbInfoJson = await getFbInfo.json();
 
- let fbPic = fbInfoJson.picture.data.url;
+//  let fbPic = fbInfoJson.picture.data.url;
 
 
   let socialInfo = {
     name: fbInfoJson.name,
     email: fbInfoJson.email,
-    picture: fbPic,
+    // picture: fbPic,
   };
 
+  
   res.render("authtest", { socialInfo });
 
 });
@@ -195,7 +202,6 @@ app.get("/handle", async function (req, res) {
     })
     .catch((err) => console.log(err));
 
-  // console.log("Access Token: ", data.access_token);
 
   const userInfo = await fetch("https://api.linkedin.com/v2/me", {
     method: "get",
@@ -249,6 +255,7 @@ app.get("/handle", async function (req, res) {
     name: userInfo.localizedFirstName + " " + userInfo.localizedLastName,
     // id: userInfo.id
   };
+
 
   res.render("authtest", { socialInfo });
 });
