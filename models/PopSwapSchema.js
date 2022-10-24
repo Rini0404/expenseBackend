@@ -47,24 +47,24 @@ const swapSchema = new mongoose.Schema({
     },
     topic: {
         type: String,
-        required: true
+        // required: true
     },
     creator: {
         type: String,
-        required: true
+        // required: true
     },
     audience: {
         type: String,
-        required: true
+        // required: true
     },
     childSwapIds: 
     {
         type: [String],
-        required: true
+        // required: true
     },
     parentSwapId: {
         type: String,
-        required: true
+        // required: true
     }
 }); 
 

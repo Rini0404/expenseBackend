@@ -83,7 +83,7 @@ app.use("/oidc", oidc.callback(), (req, res) => {
 app.use(express.static("./assets"));
 app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));
-// app.use("/swaps", require("./routes/swaps"));
+app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
 // app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
@@ -127,7 +127,6 @@ app.get("/authtest", function (req, res) {
       console.log(error);
     });
 });
-
 
 
 app.get("/fbSignin", async (req, res) => {
@@ -322,7 +321,6 @@ app.get("/handle", async function (req, res) {
 
   res.render("authtest", { socialInfo });
 });
-
 
 app.get("/linkedInSignin", async function (req, res) {
   let redirectLinkedIn = "https://dev.devusol.net/linkedInSignin";

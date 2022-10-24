@@ -1,74 +1,100 @@
 const express = require("express");
 const router = express.Router();
 const fileUpload = require("express-fileupload");
-const { getPops } = require("../utils/fsHandlers");
 const videoPath = "./assets/pops";
 const uuid = require("uuid-random");
 const fs = require("fs");
 const extFrms = require("ffmpeg-extract-frames");
+const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-const { Swap } = require("../utils/popswap");
+// const { Swap } = require("../utils/popswap");
 const { exec } = require("node:child_process");
+
+// swaps
+const { Swap } = require("../models/PopSwapSchema");
+// const { getPops } = require("../utils/popswapsutil");
 
 if (!fs.existsSync(videoPath)) {
   fs.mkdirSync(videoPath);
 }
 
+ffmpeg.setFfmpegPath(ffmpegPath);
+
 router.post(
+  // create new swap for a pop 
   "/",
-  fileUpload({ createParentPath: true }),
+  fileUpload({
+    createParentPath: true,
+  }),
   async function (req, res) {
     console.log(req.files, req.body);
-    //TODO: req.body should have as much data as possible from the sending app and attach it to the uuid object
-    //this data will be used to find filter and sort the pops later
-
     let uploadSuccess = false;
-    const swapUUID = uuid();
-    var createdVidPath;
+    let swapUUID = uuid();
+    let createdVidPath;
     if (req.files) {
-      //TODO: if the file type is not  mimetype: 'video/quicktime', forceMOV();
-
       for (let elmName in req.files) {
         const file = req.files[elmName];
         if (!(file instanceof Array)) {
-          createdVidPath = `${videoPath}/${req.body.popId}/swaps/${swapUUID}.mov`;
-          // console.log(createdVidPath);
+          createdVidPath = `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video.mov`;
+          console.log("creating new swap", swapUUID);
           await file.mv(createdVidPath);
-
           //temp use local ffmpeg on server to convert to mp4 for playback on android.
           //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
-          exec(
-            `ffmpeg -i ${createdVidPath} -vcodec h264 -vf scale=432:-1 -acodec copy ${createdVidPath}.mp4`
+          ffmpeg(createdVidPath, { timeout: 432000 })
+          .addOptions([
+            "-profile:v baseline",
+            "-level 3.0",
+            "-start_number 0",
+            "-hls_time 1",
+            "-hls_list_size 0",
+            "-f hls",
+            "-hls_segment_filename",
+            `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video%03d.mp4`,
+            `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video.m3u8`,
+          ])
+          .on("end", function () {
+            console.log("conversion done");
+          }
           )
+          .on("error", function (err) {
+            console.log("an error happened: " + err.message);
+          }
+          )
+          .save(`${videoPath}/${req.body.popId}/swaps/${swapUUID}/video.m3u8`);
 
+          //create swap object
+          const swap = new Swap({
+            popId: req.body.popId,
+            uuid: swapUUID,
+            description: req.body.description,
+          })
+          await swap.save();
           uploadSuccess = true;
-          break;
         }
       }
     }
 
-    if (!uploadSuccess) {
-      res.json({ success: uploadSuccess }).end();
+    if(!uploadSuccess){
+      res.status(500).send("upload failed");
     }
 
     await extFrms({
       input: createdVidPath,
-      output: `${videoPath}/${req.body.popId}/swaps/${swapUUID}.jpg`,
-      offsets: [0],
-      ffmpegPath,
+      output: `${videoPath}/${req.body.popId}/swaps/${swapUUID}/thumb.png`,
+      offsets: [1],
     });
 
-    // res.json({ success: uploadSuccess, recent_upload: `${popUUID}/video.mov`, pops: (await getPops()).map(vidName => `pops/${vidName}`) }).end();
-    // res.json({success: uploadSuccess, recent_upload: `${swapUUID}/video.mov`, parent: `pops/${req.query.popId}/video.mov`})
-    res
-      .json({
-        success: uploadSuccess,
-        recent_upload: swapUUID,
-        parent: req.query.popId,
-      })
-      .end();
+    res.json({
+      success: uploadSuccess,
+      recent_upload: swapUUID,
+      parent: req.body.popId,
+    })
+    .end();
+
   }
+
 );
+
 
 router.get("/onPop", async (req, res) => {
   let swapRet = [],

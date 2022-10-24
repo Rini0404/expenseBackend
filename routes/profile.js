@@ -26,6 +26,10 @@ router.post("/me", auth, async (req, res) => {
   }
 });
 
+router.post("/ree", (req, res) => {
+  res.send("ree");
+});
+
 // @route  POST /profile
 // @desc   Create or Update User Profile
 // @access Private
