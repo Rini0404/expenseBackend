@@ -48,10 +48,8 @@ router.post(
             "-hls_time 1",
             "-hls_list_size 0",
             "-f hls",
-            "-hls_segment_filename",
-            `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video%03d.mp4`,
-            `${videoPath}/${req.body.popId}/swaps/${swapUUID}/output.m3u8`,
           ])
+          .output(`${videoPath}/${req.body.popId}/swaps/${swapUUID}/output.m3u8`)
           .on("end", function () {
             console.log("conversion done");
           }
@@ -60,7 +58,7 @@ router.post(
             console.log("an error happened: " + err.message);
           }
           )
-          .save(`${videoPath}/${req.body.popId}/swaps/${swapUUID}/video.m3u8`);
+          .run();
 
           //create swap object
           const swap = new Swap({
@@ -101,48 +99,33 @@ router.post(
 
 
 router.get("/onPop", async (req, res) => {
-  let swapRet = [],
-    swapTrack;
-  const swapDir = `${videoPath}/${req.query.popId}/swaps`;
 
-  if (!fs.existsSync(swapDir)) {
-    return res
-      .json({
-        popId: req.query.popId,
-        swaps: [],
-      })
-      .end();
+  // when we hit this route we are returning the lis of swaps for a given pop
+  
+  let swapReturn = [];
+
+  const swaps = await Swap.find({ popId: req.query.popId });
+
+  for (let i = 0; i < swaps.length; i++) {
+    swapReturn.push({
+      uuid: swaps[i].uuid,
+      description: swaps[i].description || "No Description",
+      tags: swaps[i].tags || "No Tags",
+      title: swaps[i].title || "No Title",
+      creator: swaps[i].creator || "No Creator",
+      created: swaps[i].created || "No Date",
+    });
   }
 
-  const swapIds = await fs.promises.readdir(swapDir);
+  res.json(swapReturn).end();
 
-
-  // seperate the swap ids into two arrays
-  const swapVids = swapIds.filter((swapId) => swapId.includes(".mp4"));
-
-  // remove the file extension from the swap ids
-  swapVids.forEach((swapId, idx) => {
-    swapVids[idx] = swapId.replace(".mov.mp4", "");
-  });
-
-  res.json({ 
-    popId: req.query.popId, 
-    swaps: swapVids,
-  })
-  .end();
+  
 
 });
-
-//   // res.json(swapIds.map(swapId => `swaps/get?popId=${req.query.popId}&swapId=${swapId}`))
-
-
 
 new Swap();
 
 router.use("/", express.static(videoPath));
 
-router.get("/get", (req, res) => {
-  res.sendFile(`${videoPath}/${req.query.popId}/swaps/${req.query.swapId}.mov`);
-});
 
 module.exports = router;
