@@ -49,14 +49,40 @@
           <div class="row">
 
             <div class="col-md-6">
+
               
               <button
               style="background-color: #6153c3"
+              class="btn m-4 h-10 text-white rounded-2xl w-72">
+              <a href="" 
+              style="color: white; text-decoration: none; font-size: 20px; font-weight: 600; padding: 10px 20px; cursor: pointer; margin-top: 10px;"
+              id="start">Linked In </a>
+            </button>
+
+              <button
+              style="background-color: #6153c3"
+              
               class="btn m-2 h-10 text-white rounded-2xl w-72">
-            <a href="" id="loginBtn"> FaceBook </a>
+            <a href="" 
+            style="color: white; text-decoration: none; font-size: 20px; font-weight: 600; padding: 10px 20px; cursor: pointer; margin-top: 10px;"
+            id="loginBtn"> FaceBook </a>
             </button> 
             
               <script>
+
+                // linked in 
+                const link = document.querySelector("#start");
+                const array = new Uint16Array(10);
+                const state = self.crypto.randomUUID();
+                console.log(state);
+                const clientID = "78u9lqsln6z7j5";
+                const redirectURI = "https://dev.devusol.net/linkedInSignin";
+
+                const authURL = `https://www.linkedin.com/oauth/v2/authorization?client_id=${clientID}&redirect_uri=${encodeURIComponent(
+                  redirectURI
+                )}&scope=r_liteprofile%20r_emailaddress&response_type=code&state=${state}`;
+
+                link.href = authURL;
           
                 // grab button
                 var loginBtn = document.getElementById("loginBtn");
@@ -75,9 +101,11 @@
                 // grab the token from the url
                 let url = window.location.href;
                 let token = url.split("token=")[1];
+                console.log("deeeeeeeeeeee", token);
                 if (token) {
                   window.ReactNativeWebView.postMessage(JSON.parse(JSON.stringify(token)));
                 }
+
                 
             </script>
 

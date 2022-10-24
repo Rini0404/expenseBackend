@@ -128,6 +128,8 @@ app.get("/authtest", function (req, res) {
     });
 });
 
+
+
 app.get("/fbSignin", async (req, res) => {
   let redirectURIfb = "https://dev.devusol.net/fbSignin";
   let appSecrete = `5f155c61526fbfdd589770129adbb9c6`;
@@ -320,6 +322,69 @@ app.get("/handle", async function (req, res) {
 
   res.render("authtest", { socialInfo });
 });
+
+
+app.get("/linkedInSignin", async function (req, res) {
+  let redirectLinkedIn = "https://dev.devusol.net/linkedInSignin";
+  const clientSecret = "j2j4X8wbWuWjlQGt";
+  const clientId = "78u9lqsln6z7j5";
+  const tokenUrl = `https://www.linkedin.com/oauth/v2/accessToken?client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectLinkedIn}&grant_type=authorization_code&code=${req.query.code}`
+
+  const getLinkedInToken = await fetch(tokenUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${req.query.code}`,
+    }
+  },
+  );
+  const linkedInTokenJson = await getLinkedInToken.json();
+
+  const linkedInProfileUrl = `https://api.linkedin.com/v2/me`
+
+  const userInfo = await fetch(linkedInProfileUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${linkedInTokenJson.access_token}`,
+    }
+  },
+  );
+  const userInfoJson = await userInfo.json();
+
+  const getEmail = await fetch(`https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${linkedInTokenJson.access_token}`,
+    }
+  },
+  );
+
+  const emailJson = await getEmail.json();
+
+  let socialInfo = {
+    name: userInfoJson.localizedFirstName + " " + userInfoJson.localizedLastName,
+    email: emailJson.elements[0]["handle~"].emailAddress,
+  };
+
+  // sigin in user
+
+  const response = await fetch("https://dev.devusol.net/socialauth", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(socialInfo),
+  })
+    .catch((err) => console.log(err));
+
+  const responseJson = await response.json();
+
+  res.redirect(`https://dev.devusol.net/loginAuth?token=${responseJson.token}`);
+
+});
+
 
 app.get("*", (req, res) => {
   res.redirect("/admin/login");
