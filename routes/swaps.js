@@ -50,7 +50,7 @@ router.post(
             "-f hls",
             "-hls_segment_filename",
             `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video%03d.mp4`,
-            `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video.m3u8`,
+            `${videoPath}/${req.body.popId}/swaps/${swapUUID}/output.m3u8`,
           ])
           .on("end", function () {
             console.log("conversion done");
@@ -67,6 +67,10 @@ router.post(
             popId: req.body.popId,
             uuid: swapUUID,
             description: req.body.description,
+            tags: req.body.tags || "No Tags",
+            title: req.body.title || "No Title",
+            creator: req.body.creator || "No Creator",
+            created: Date.now(),
           })
           await swap.save();
           uploadSuccess = true;
