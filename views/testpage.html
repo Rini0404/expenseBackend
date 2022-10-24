@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TEST</title>
-    <style></style>
+    <link href="//vjs.zencdn.net/7.10.2/video-js.min.css" rel="stylesheet" />
   </head>
   <body>
     <div>
@@ -25,19 +25,41 @@
     </div>
     <div>
       <h1>Video player</h1>
-      <video
+      <!-- <video
         style="width: 640px; height: 320px"
         data-dashjs-player
         autoplay
         muted
         controls
-        src="https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
-      ></video>
+        src="https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
+      ></video> -->
+      <!-- <video class="video-js vjs-default-skin" controls>
+        <source
+          src="https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
+          type="application/x-mpegURL"
+        />
+      </video> -->
+      <!-- HTML -->
+      <video
+        id="hls-example"
+        class="video-js vjs-default-skin"
+        width="400"
+        height="300"
+        muted
+        poster="https://dev.devusol.net/pops/59fc9c19-801d-41a2-9e3a-1cc42c76ddfd/thumb.jpg"
+        data-setup='{"controls": true, "autoplay": true, "preload": "auto"}'
+      >
+        <source
+          type="application/x-mpegURL"
+          src="https://dev.devusol.net/pops/59fc9c19-801d-41a2-9e3a-1cc42c76ddfd/output.m3u8"
+        />
+      </video>
     </div>
 
     <script>
       const fileInput = document.getElementById("fileInput");
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.5.0/dash.all.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.5.0/dash.all.min.js"></script> -->
+    <script src="//vjs.zencdn.net/7.10.2/video.min.js"></script>
   </body>
 </html>
