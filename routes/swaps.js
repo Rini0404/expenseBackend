@@ -68,12 +68,14 @@ router.post(
           // find the parent pop 
           const parentPop = req.body.popId;
 
-          // find the collection of pops and push the swapUUID to the childSwapIds 
-          await parentPop.findOneAndUpdate(
-            { _id: parentPop._id },
-            { $push: { childSwapIds: swapUUID } }
-          );
+          // find Pop by id
+          const pop = await Pop.findById(parentPop);
+          // then push the swapUUID to the childSwapIds array
 
+          pop.childSwapIds.push(swapUUID);
+
+          // save the pop
+          await pop.save();
 
           //create swap object
           const swap = new Swap({
