@@ -13,6 +13,9 @@ const { exec } = require("node:child_process");
 // swaps
 const { Swap } = require("../models/PopSwapSchema");
 // const { getPops } = require("../utils/popswapsutil");
+const { Pop } = require("../models/PopSwapSchema");
+
+// route to view swap
 
 if (!fs.existsSync(videoPath)) {
   fs.mkdirSync(videoPath);
@@ -60,6 +63,18 @@ router.post(
           )
           .run();
 
+          
+
+          // find the parent pop 
+          const parentPop = req.body.popId;
+
+          // find the collection of pops and push the swapUUID to the childSwapIds 
+          await parentPop.findOneAndUpdate(
+            { _id: parentPop._id },
+            { $push: { childSwapIds: swapUUID } }
+          );
+
+
           //create swap object
           const swap = new Swap({
             popId: req.body.popId,
@@ -70,7 +85,8 @@ router.post(
             creator: req.body.creator || "No Creator",
             created: Date.now(),
           })
-          await swap.save();
+          await swap.save(); 
+          await parentPop.save();
           uploadSuccess = true;
         }
       }
@@ -119,11 +135,20 @@ router.get("/onPop", async (req, res) => {
 
   res.json(swapReturn).end();
 
-  
-
 });
 
 new Swap();
+
+
+// view the swap of
+
+// router.get("/getSwap", async (req, res) => {
+
+//   // look for the swap in in the pop
+  
+
+// })
+
 
 router.use("/", express.static(videoPath));
 
