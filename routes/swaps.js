@@ -149,7 +149,7 @@ router.get("/:uuid", async (req, res) => {
 
 // get the route to watch a swap 
 router.get("/get", async (req, res) => {
-  res.sendFile(`${videoPath}/${req.query.popId}/swaps/${req.query.swapId}/video.mov`);
+  res.sendFile(`${videoPath}/${req.query.popId}/swaps/${req.query.swapId}/output.m3u8`);
 })
 
 
