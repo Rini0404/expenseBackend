@@ -13,6 +13,9 @@ const { exec } = require("node:child_process");
 // swaps
 const { Swap } = require("../models/PopSwapSchema");
 // const { getPops } = require("../utils/popswapsutil");
+const { Pop } = require("../models/PopSwapSchema");
+
+// route to view swap
 
 if (!fs.existsSync(videoPath)) {
   fs.mkdirSync(videoPath);
@@ -60,6 +63,15 @@ router.post(
           )
           .run();
 
+          
+
+          // in the Pop model, find the pop with the UUID of 
+          // req.body.popId and add the swapUUID to the childSwapIds array 
+          const pop = await Pop.findOne({ uuid: req.body.popId });
+
+          pop.childSwapIds.push(swapUUID);
+          await pop.save();
+
           //create swap object
           const swap = new Swap({
             popId: req.body.popId,
@@ -70,7 +82,7 @@ router.post(
             creator: req.body.creator || "No Creator",
             created: Date.now(),
           })
-          await swap.save();
+          await swap.save(); 
           uploadSuccess = true;
         }
       }
@@ -119,11 +131,27 @@ router.get("/onPop", async (req, res) => {
 
   res.json(swapReturn).end();
 
-  
-
 });
 
 new Swap();
+
+// @route   GET api/swaps
+// @desc    Route to view a swap by uuid
+// @access  Public
+router.get("/:uuid", async (req, res) => {
+  const swap = await Swap.findOne({ uuid: req.params.uuid });
+  if (!swap) {
+    return res.status(404).json({ msg: "Swap not found" });
+  }
+  res.json(swap);
+
+})
+
+// get the route to watch a swap 
+router.get("/get", async (req, res) => {
+  res.sendFile(`${videoPath}/${req.query.popId}/swaps/${req.query.swapId}/output.m3u8`);
+})
+
 
 router.use("/", express.static(videoPath));
 
