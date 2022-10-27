@@ -80,7 +80,7 @@ app.use("/oidc", oidc.callback(), (req, res) => {
   console.log(req);
 });
 
-app.use(express.static("./assets"));
+app.use(express.static("./assets", { fallthrough: true }));
 app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
@@ -136,7 +136,7 @@ app.get("/fbSignin", async (req, res) => {
   let fbTokenUrl = `https://graph.facebook.com/v10.0/oauth/access_token?client_id=${fbId}&redirect_uri=${redirectURIfb}&client_secret=${appSecrete}&code=${req.query.code}`;
 
   const { code } = req.query;
-  
+
   const fbToken = await fetch(fbTokenUrl, {
     method: "GET",
     headers: {
@@ -168,10 +168,10 @@ app.get("/fbSignin", async (req, res) => {
       "Content-Type": "application/json",
     },
   })
-  .catch((err) => {
-    console.log(err);
-    return err;
-  });
+    .catch((err) => {
+      console.log(err);
+      return err;
+    });
 
   const resResult = await response.data;
 
@@ -210,7 +210,7 @@ app.get("/fbHandle", async (req, res) => {
   );
   const fbInfoJson = await getFbInfo.json();
 
-//  let fbPic = fbInfoJson.picture.data.url;
+  //  let fbPic = fbInfoJson.picture.data.url;
 
 
   let socialInfo = {
@@ -219,7 +219,7 @@ app.get("/fbHandle", async (req, res) => {
     // picture: fbPic,
   };
 
-  
+
   res.render("authtest", { socialInfo });
 
 });
@@ -385,35 +385,46 @@ app.get("/linkedInSignin", async function (req, res) {
 
 
 app.get("*", (req, res) => {
+  // console.log("fallthrough")
   res.redirect("/admin/login");
 });
 
-const server = app.listen(port, () => {
+const server = app.listen(port, (err) => {
+  if (err) { console.log("ERROR!!!", err) }
   console.log(`Example app listening on port ${port}`);
 });
 
 const hlsServer = new Hls(server, {
   provider: {
     exists: (req, cb) => {
-      const ext = req.url.split(".").pop;
-      
-      if(ext != "m3u8" && ext != "ts") {
+      const ext = req.url.split(".").pop();
+      //console.log("ext: ", req.url.split("."))
+      // ext = ext.pop();
+      if (ext != "m3u8" && ext != "ts") {
+        //   console.log(`${ext} is not hls related`)
         return cb(null, true);
       }
+      // console.log(`checking if ${ext} file exists`)
       fs.access(`${__dirname}/assets/${req.url}`, fs.constants.F_OK, function (er) {
-        if(er) {
-          console.log("unable to find file");
+        if (er) {
+          // console.log("unable to find file: ", er);
           return cb(null, false);
         }
+        //  console.log("it does")
         cb(null, true);
       });
+
+
     },
     getManifestStream: (req, cb) => {
+    //  console.log(`get manifest file ${__dirname}/assets/${req.url}`)
       const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`);
+      /// console.log("get manifest:", stream)
       cb(null, stream);
     },
     getSegmentStream: (req, cb) => {
-      const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`);
+     // console.log(`get stream ${__dirname}/assets/${req.url}`)
+      const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`, { bufferSize: 64 * 1024 });
       cb(null, stream);
     }
   }
