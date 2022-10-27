@@ -1,7 +1,6 @@
 const AdminJS = require("adminjs");
 const AdminJSExpress = require("@adminjs/express");
 const AdminJSMongoose = require("@adminjs/mongoose");
-const Provider = require("oidc-provider");
 const path = require("path");
 const express = require("express");
 const app = express();
@@ -15,7 +14,7 @@ const fs = require("fs");
 /** AdminJS Setup */
 // Database
 const connection = require("./config/db.config");
-const adapter = require("./config/mongoAdapter");
+
 const Users = require("./models/User");
 const Profile = require("./models/Profile");
 const { Pop, Swap } = require("./models/PopSwapSchema");
@@ -46,55 +45,24 @@ const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
   cookiePassword: "sessionsecret",
 });
 
-/** OIDC Provider Setup */
-
-const oidcOptions = require("./config/oidc.config");
-// const { default: checkBox } = require("@adminjs/design-system/types/atoms/check-box");
-const oidc = new Provider("http://localhost:3000/oidc", {
-  adapter,
-  ...oidcOptions,
-});
-//const oidc = new Provider("http://localhost:3000/oidc", oidcOptions);
-oidc.proxy = true;
-
 app.set("view engine", "ejs");
 app.use(cors());
 app.use(admin.options.rootPath, adminRouter);
-
-// app.use(express.json({
-//   limit: "10000kb",
-//   extended: true,
-//   parameterLimit: 50000
-// }));
-
-// app.use(express.urlencoded({
-//   limit: "10000kb",
-//   extended: true,
-//   parameterLimit: 50000
-// }));
-
-// init middleware
 app.use(express.json({ extended: false }));
-
-app.use("/oidc", oidc.callback(), (req, res) => {
-  console.log(req);
-});
-
 app.use(express.static("./assets", { fallthrough: true }));
 app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
 app.use("/gdrive", require("./utils/googledriveHandler"));
-// app.use("/post", require("./routes/postvid"));
 app.use("/users", require("./routes/users"));
 app.use("/profile", require("./routes/profile"));
 app.use("/auth", require("./routes/auth"));
 app.use("/social", require("./routes/Social"));
 app.use("/socialauth", require("./routes/SocialAuth"));
+// app.use("/post", require("./routes/postvid"));
 
 app.get("/", (req, res) => {
-  // console.log(req.query, );
-  res.sendFile(__dirname + "/views/oidc.html");
+  res.sendFile(__dirname + "/views/home.html");
 });
 
 app.get("/test", (req, res) => {
@@ -105,9 +73,9 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
-app.get("/loginAuth", (req, res) => {
-  res.sendFile(__dirname + "/views/loginAuth.html");
-});
+// app.get("/loginAuth", (req, res) => {
+//   res.sendFile(__dirname + "/views/loginAuth.html");
+// });
 
 app.get("/policy", (req, res) => {
   res.sendFile(__dirname + "/views/Policy.html");
