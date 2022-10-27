@@ -80,7 +80,7 @@ app.use("/oidc", oidc.callback(), (req, res) => {
   console.log(req);
 });
 
-app.use(express.static("./assets"));
+app.use(express.static("./assets",{fallthrough: true}));
 app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));
 app.use("/swaps", require("./routes/swaps"));
@@ -385,10 +385,12 @@ app.get("/linkedInSignin", async function (req, res) {
 
 
 app.get("*", (req, res) => {
+  // console.log("fallthrough")
   res.redirect("/admin/login");
 });
 
-const server = app.listen(port, () => {
+const server = app.listen(port, (err) => {
+  if (err) {console.log("ERROR!!!",err)}
   console.log(`Example app listening on port ${port}`);
 });
 

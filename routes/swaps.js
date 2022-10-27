@@ -80,7 +80,7 @@ router.post(
             tags: req.body.tags || "No Tags",
             title: req.body.title || "No Title",
             creator: req.body.creator || "No Creator",
-            created: Date.now(),
+            parentSwapId: req.body.popId
           })
           await swap.save(); 
           uploadSuccess = true;
@@ -112,24 +112,10 @@ router.post(
 
 router.get("/onPop", async (req, res) => {
 
-  // when we hit this route we are returning the lis of swaps for a given pop
+//  get all the swaps who have the parentSwapId of the popId passed in the query
+  const swaps = await Swap.find({ parentSwapId: req.query.popId });
+  res.json(swaps);
   
-  let swapReturn = [];
-
-  const swaps = await Swap.find({ popId: req.query.popId });
-
-  for (let i = 0; i < swaps.length; i++) {
-    swapReturn.push({
-      uuid: swaps[i].uuid,
-      description: swaps[i].description || "No Description",
-      tags: swaps[i].tags || "No Tags",
-      title: swaps[i].title || "No Title",
-      creator: swaps[i].creator || "No Creator",
-      created: swaps[i].created || "No Date",
-    });
-  }
-
-  res.json(swapReturn).end();
 
 });
 
@@ -147,10 +133,12 @@ router.get("/:uuid", async (req, res) => {
 
 })
 
-// get the route to watch a swap 
-router.get("/get", async (req, res) => {
-  res.sendFile(`${videoPath}/${req.query.popId}/swaps/${req.query.swapId}/output.m3u8`);
-})
+// // get the route to watch a swap 
+// router.get("/get", async (req, res) => {
+//   // play the swap with the uuid passed in the query
+//   console.log("IM HERE ")
+//   res.sendFile(`${videoPath}/${req.query.popId}/swaps/${req.query.swapId}/output.m3u8`);
+// })
 
 
 router.use("/", express.static(videoPath));

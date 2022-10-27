@@ -154,9 +154,9 @@ function registerSearch(...names) {
   }
 }
 
-router.get("/get", (req, res) => {
-  res.sendFile(`${__dirname.split("routes")[0]}/assets/pops/${req.query.popId}/output.m3u8`);
-});
+// router.get("/get", (req, res) => {
+//   res.sendFile(`${__dirname.split("routes")[0]}/assets/pops/${req.query.popId}/output.m3u8`);
+// });
 
 router.get("/data", async (req, res) => {
   const pop = await Pop.findOne({
