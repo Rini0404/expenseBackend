@@ -41,8 +41,6 @@ router.post(
     const popUUID = uuid();
     var createdVidPath;
     if (req.files) {
-      //TODO: if the file type is not  mimetype: 'video/quicktime', forceMOV();
-
       for (let elmName in req.files) {
         const file = req.files[elmName];
         if (!(file instanceof Array)) {
@@ -50,22 +48,20 @@ router.post(
           console.log("creating new pop", popUUID);
           await file.mv(createdVidPath);
 
-          //temp use local ffmpeg on server to convert to mp4 for playback on android.
-          //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
-          ffmpeg(createdVidPath, {timeout: 432000 })
-          .addOptions([
-            "-profile:v baseline",
-            "-level 3.0",
-            "-start_number 0",
-            "-hls_time 1",
-            "-hls_list_size 0",
-            "-f hls"
-          ])
-          .output(`${videoPath}/${popUUID}/output.m3u8`)
-          .on("end", () => {
-            console.log("ended");
-          })
-          .run();
+          ffmpeg(createdVidPath, { timeout: 432000 })
+            .addOptions([
+              "-profile:v baseline",
+              "-level 3.0",
+              "-start_number 0",
+              "-hls_time 1",
+              "-hls_list_size 0",
+              "-f hls"
+            ])
+            .output(`${videoPath}/${popUUID}/output.m3u8`)
+            .on("end", () => {
+              console.log("ended");
+            })
+            .run();
           // await exec(
           //   `${ffmpegPath} -i ${videoPath}/${popUUID}/video.mov -vcodec h264 -vf scale=448:-1 -acodec copy ${videoPath}/${popUUID}/video.mp4`
           // );
@@ -107,12 +103,12 @@ router.post(
 
     try {
       pop.save();
-    } catch(e) {
-      console.log("error saving pop...\n\n\n",e);
+    } catch (e) {
+      console.log("error saving pop...\n\n\n", e);
       fs.unlinkSync(`${videoPath}/${popUUID}`);
     }
 
-    
+
 
     res
       .json({
@@ -128,7 +124,7 @@ router.post(
 );
 
 // router.get(/.*\/video\.(mov|mp4)\/?$/, (req, res) => {
-  
+
 // });
 
 router.get("/all", async (req, res) => {
@@ -140,9 +136,9 @@ router.get("/all", async (req, res) => {
 registerSearch("creator", "topic", "audience", "uuid");
 
 function registerSearch(...names) {
-  for(const name of names) {
+  for (const name of names) {
     router.get("/search", async (req, res, next) => {
-      if(!req.query[name]) {
+      if (!req.query[name]) {
         next();
         return;
       }
@@ -162,14 +158,14 @@ router.get("/data", async (req, res) => {
   const pop = await Pop.findOne({
     uuid: req.query.popId
   });
-  if(pop.length) {
+  if (pop.length) {
     res.json(convertPopSwap(pop));
   } else {
     res.status(500).json(
-    {
-      error: true,
-      reason: "no video with id " + req.query.popId
-    })
+      {
+        error: true,
+        reason: "no video with id " + req.query.popId
+      })
   }
 });
 
