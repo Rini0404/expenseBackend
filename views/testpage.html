@@ -8,6 +8,23 @@
     <link href="//vjs.zencdn.net/7.10.2/video-js.min.css" rel="stylesheet" />
   </head>
   <body>
+
+    <div style="background-color: rgba(0, 0, 255, 0.226);">
+      <input id="popId" placeholder="pop id">
+      <input id="ratingValue" placeholder="rating value" type="number">
+      <button id="rateBtn">Rate pop</button>
+    </div>
+
+    <script>
+      document.getElementById("rateBtn").onclick = async () => {
+        const r = await fetch(`http://localhost:3001/pops/rate?popId=${document.getElementById("popId").value}&ratingValue=${document.getElementById("ratingValue").value}`, {
+          method: "POST"
+        });
+        const dat = await r.json();
+        console.log(dat.pop.ratingNumerator / dat.pop.ratingDenominator);
+      }
+    </script>
+
     <div>
       <h1>Save file to assets/pops</h1>
       <form action="/pop" method="post" enctype="multipart/form-data">

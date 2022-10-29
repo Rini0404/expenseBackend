@@ -10,6 +10,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 const Hls = require("hls-server");
 const fs = require("fs");
+const bodyParser = require("body-parser");
 
 /** AdminJS Setup */
 // Database
@@ -49,6 +50,10 @@ app.set("view engine", "ejs");
 app.use(cors());
 app.use(admin.options.rootPath, adminRouter);
 app.use(express.json({ extended: false }));
+
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true })); 
+
 app.use(express.static("./assets", { fallthrough: true }));
 app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));
@@ -73,9 +78,9 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
-// app.get("/loginAuth", (req, res) => {
-//   res.sendFile(__dirname + "/views/loginAuth.html");
-// });
+app.get("/loginAuth", (req, res) => {
+  res.sendFile(__dirname + "/views/loginAuth.html");
+});
 
 app.get("/policy", (req, res) => {
   res.sendFile(__dirname + "/views/Policy.html");

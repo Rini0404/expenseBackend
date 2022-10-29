@@ -9,7 +9,9 @@ const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 //const { exec } = require("node:child_process");
 const { Pop } = require("../models/PopSwapSchema");
+const auth = require("../middleware/auth");
 const fs = require("fs");
+const User = require("../models/User");
 // const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
 // @route    POST /pops
@@ -32,6 +34,7 @@ router.post(
   fileUpload({
     createParentPath: true,
   }),
+  auth,
   async function (req, res) {
     console.log(req.files, req.body);
     //TODO: req.body should have as much data as possible from the sending app and attach it to the uuid object
@@ -47,7 +50,7 @@ router.post(
           createdVidPath = `${videoPath}/${popUUID}/video.mov`;
           console.log("creating new pop", popUUID);
           await file.mv(createdVidPath);
-
+``
           ffmpeg(createdVidPath, { timeout: 432000 })
             .addOptions([
               "-profile:v baseline",
@@ -106,9 +109,11 @@ router.post(
     } catch (e) {
       console.log("error saving pop...\n\n\n", e);
       fs.unlinkSync(`${videoPath}/${popUUID}`);
+      return res.json({error: true, reason: "failed to save pop"});
     }
 
-
+    req.DBUser.pops.push(pop.uuid);
+    req.DBUser.save();
 
     res
       .json({
@@ -169,11 +174,60 @@ router.get("/data", async (req, res) => {
   }
 });
 
+router.get("/myPops", auth, async (req, res) => {
+  // TODO: FOrmat pops with convertpopswap
+  res.json(req.DBUser.pops);
+});
+
 router.get("/childSwaps", (req, res) => {
   res.redirect(`/swaps/onPop?popId=${req.query.popId}`);
 });
 
+router.post("/rate", async (req, res) => {
+  const pop = await Pop.findOne({
+    uuid: req.query.popId
+  });
 
+  var er = null;
+
+  if(!pop) {
+    er = "no pop with id " + req.query.popId;
+  }
+
+  const rMax = 9;
+  const rVal = parseInt(req.query.ratingValue);
+
+  if((rMax < rVal || isNaN(rVal) || rVal < 0)) {
+    er = `invalid rating values ${rMax < rVal} ${isNaN(rVal)} ${rVal < 0}`;
+  }
+
+  // if(pop.rated)
+
+  if(er) {
+    return res.status(500)
+    .json(
+      {
+        error: true,
+        reason: er
+      }
+    )
+  }
+
+  if(pop.ratingNum == undefined) {
+    pop.ratingNum = rVal;
+    pop.ratingDen = rMax;
+  } else {
+    pop.ratingNum += rVal;
+    pop.ratingDen += rMax;
+  }
+
+  await pop.save();
+
+  res.json({
+    success: true,
+    pop: convertPopSwap(pop)
+  });
+});
 
 
 module.exports = router;

@@ -1,23 +1,4 @@
-const mongoose = require('mongoose');
-
-const geoSchema = new mongoose.Schema({
-    name: String,
-    location: {
-      type: {
-        type: String, // Don't do `{ location: { type: String } }`
-        enum: ["Point"], // 'location.type' must be 'Point'
-        // required: true,
-      },
-      coordinates: {
-        type: [Number],
-        // required: true,
-        index: {
-          type: '2dsphere',
-          sparse: true
-        },
-      },
-    },
-  });
+const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -33,7 +14,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     // required: true
   },
-  geographic: geoSchema
+  pops: {
+    type: [String]
+  }
 });
 
 module.exports = mongoose.model('user', UserSchema);

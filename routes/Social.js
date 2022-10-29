@@ -24,10 +24,12 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email } = req.body;
+    const { name, email, loc } = req.body;
 
     try {
       let user = await User.findOne({ email });
+
+      // if(typeof loc.name != "string" || typeof loc.long != "number" || typeof loc.lat != "number") return;
 
       if (user) {
         return res
@@ -38,6 +40,7 @@ router.post(
       user = new User({
         name,
         email,
+        pops: []
       });
 
       await user.save();

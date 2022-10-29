@@ -50,6 +50,19 @@ router.post(
 
       user.password = await bcrypt.hash(password, salt);
 
+      // user.geographic = {
+      //   name: loc.name,
+      //   location: {
+      //     location: {
+      //       type: "Point",
+      //       coordinates: [
+      //         parseInt(loc.long) || 0,
+      //         parseInt(loc.lat) || 0,
+      //       ]
+      //     }
+      //   }
+      // }
+
       await user.save();
 
       const payload = {

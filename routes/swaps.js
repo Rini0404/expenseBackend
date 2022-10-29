@@ -81,7 +81,7 @@ router.post(
             title: req.body.title || "No Title",
             creator: req.body.creator || "No Creator",
             parentSwapId: req.body.popId
-          })
+          });
           await swap.save(); 
           uploadSuccess = true;
         }
@@ -115,11 +115,9 @@ router.get("/onPop", async (req, res) => {
 //  get all the swaps who have the parentSwapId of the popId passed in the query
   const swaps = await Swap.find({ parentSwapId: req.query.popId });
   res.json(swaps);
-  
-
 });
 
-new Swap();
+
 
 // @route   GET api/swaps
 // @desc    Route to view a swap by uuid

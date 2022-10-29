@@ -53,7 +53,8 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { tag, dob, zip, pronoun } = req.body;
+    const { tag, dob, zip, pronoun, long, lat } = req.body;
+
 
     // Build Profile Object
     const profileFields = {};
@@ -65,6 +66,22 @@ router.post(
     // if (pic) profileFields.pic = pic;
     // if (cover) profileFields.cover = cover;
     if (pronoun) profileFields.pronoun = pronoun;
+
+    // profileFields.long = long;
+    // profileFields.lat = lat;
+
+    profileFields.geographic = {
+      name: "geonamehere",
+      location: {
+        location: {
+          type: "Point",
+          coordinates: [
+            parseInt(long) || 0,
+            parseInt(lat) || 0,
+          ]
+        }
+      }
+    }
 
     try {
       let profile = await Profile.findOne({ user: req.user.id });

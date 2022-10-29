@@ -33,6 +33,18 @@ const popSchema = new mongoose.Schema({
     {
         type: [String],
         required: true
+    },
+    ratingNum: {
+        type: Number
+    },
+    ratingDen: {
+        type: Number
+    },
+    // String array of unique identifiers to users to check if a user already rated the video
+    // Check models/UserRating for alternative method that can increase performance.
+    rated: {
+        type: [String],
+        required: true
     }
 });
 
@@ -65,6 +77,12 @@ const swapSchema = new mongoose.Schema({
     parentSwapId: {
         type: String,
         // required: true
+    },
+    ratingNum: {
+        type: Number
+    },
+    ratingDen: {
+        type: Number
     }
 }); 
 
