@@ -11,6 +11,7 @@ const fetch = require("node-fetch");
 const Hls = require("hls-server");
 const fs = require("fs");
 
+
 /** AdminJS Setup */
 // Database
 const connection = require("./config/db.config");
@@ -45,8 +46,14 @@ const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
   cookiePassword: "sessionsecret",
 });
 
+  
+
 app.set("view engine", "ejs");
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 app.use(admin.options.rootPath, adminRouter);
 app.use(express.json({ extended: false }));
 app.use(express.static("./assets", { fallthrough: true }));

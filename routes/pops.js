@@ -16,12 +16,12 @@ const fs = require("fs");
 // @desc     Save uploads to assets/pops/[uuid].mov
 // @access   Public
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+// ffmpeg.setFfmpegPath(ffmpegPath);
 
-if (!fs.existsSync(videoPath)) {
-  fs.mkdirSync(videoPath);
-}
 
+// if (!fs.existsSync(videoPath)) {
+//   fs.mkdirSync(videoPath);
+// }
 // router.get("/", (req, res) => {
 
 // });
@@ -29,103 +29,39 @@ if (!fs.existsSync(videoPath)) {
 
 router.post(
   "/",
-  fileUpload({
-    createParentPath: true,
-  }),
   async function (req, res) {
-    console.log(req.files, req.body);
-    //TODO: req.body should have as much data as possible from the sending app and attach it to the uuid object
-    //this data will be used to find filter and sort the pops later
+    console.log( req.body);
+    // let uploadSuccess = false;
 
-    let uploadSuccess = false;
-    const popUUID = uuid();
-    var createdVidPath;
-    if (req.files) {
-      for (let elmName in req.files) {
-        const file = req.files[elmName];
-        if (!(file instanceof Array)) {
-          createdVidPath = `${videoPath}/${popUUID}/video.mov`;
-          console.log("creating new pop", popUUID);
-          await file.mv(createdVidPath);
+    if(req.body){
+      // upload to mongo
+      const pop = new Pop({
+        creator: req.body.creator,
+        topic: req.body.topic,
+        audience: req.body.audience,
+        uuid: req.body.uuid,
+        topic: req.body.topic,
+        description: req.body.description,
+        childSwapIds: [],
+      });
+      await pop.save();
 
-          ffmpeg(createdVidPath, { timeout: 432000 })
-            .addOptions([
-              "-profile:v baseline",
-              "-level 3.0",
-              "-start_number 0",
-              "-hls_time 1",
-              "-hls_list_size 0",
-              "-f hls"
-            ])
-            .output(`${videoPath}/${popUUID}/output.m3u8`)
-            .on("end", () => {
-              console.log("ended");
-            })
-            .run();
-          // await exec(
-          //   `${ffmpegPath} -i ${videoPath}/${popUUID}/video.mov -vcodec h264 -vf scale=448:-1 -acodec copy ${videoPath}/${popUUID}/video.mp4`
-          // );
-
-          uploadSuccess = true;
-          break;
-        }
-      }
+      
+    } else {
+      res.status(500).json({
+        message: "Error: no data sent",
+      });
     }
-
-    if (!uploadSuccess) {
-      res.json({ success: uploadSuccess }).end();
-      return;
-    }
-
-    await extFrms({
-      input: createdVidPath,
-      output: `${videoPath}/${popUUID}/thumb.jpg`,
-      offsets: [0],
-      ffmpegPath,
+    res.json({
+      success: true,
     });
 
-    /*
-       uuid: popUUID,
-      desc: req.body.description,
-      topic: req.body.topic,
-      creator: req.body.creator,
-      audience: req.body.audience
- */
-
-    const pop = new Pop({
-      uuid: popUUID,
-      description: req.body.description,
-      topic: req.body.topic,
-      creator: req.body.creator || "no user",
-      audience: req.body.audience,
-      childSwapIds: []
-    });
-
-    try {
-      pop.save();
-    } catch (e) {
-      console.log("error saving pop...\n\n\n", e);
-      fs.unlinkSync(`${videoPath}/${popUUID}`);
-    }
 
 
 
-    res
-      .json({
-        success: uploadSuccess,
-        recent_upload: popUUID,
-        thumb: `pops/${popUUID}/thumb.jpg`,
-        pops: convertPopSwap(await getPops()),
-      })
-      .end();
 
-    // res.json({ success: uploadSuccess, recent_upload: `pops/${popUUID}/video.mov`, thumb: `pops/${popUUID}/thumb.jpg`, pops: (await getPops()).map(vidName => `pops/${vidName}`) }).end();
   }
 );
-
-// router.get(/.*\/video\.(mov|mp4)\/?$/, (req, res) => {
-
-// });
 
 router.get("/all", async (req, res) => {
   const pops = await getPops();

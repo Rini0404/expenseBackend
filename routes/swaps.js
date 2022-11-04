@@ -15,67 +15,33 @@ const { Swap } = require("../models/PopSwapSchema");
 // const { getPops } = require("../utils/popswapsutil");
 const { Pop } = require("../models/PopSwapSchema");
 
-// route to view swap
-
-if (!fs.existsSync(videoPath)) {
-  fs.mkdirSync(videoPath);
-}
+// route to view swaps
+// if (!fs.existsSync(videoPath)) {
+//   fs.mkdirSync(videoPath);
+// }
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 router.post(
   // create new swap for a pop 
   "/",
-  fileUpload({
-    createParentPath: true,
-  }),
   async function (req, res) {
     console.log(req.files, req.body);
     let uploadSuccess = false;
-    let swapUUID = uuid();
-    let createdVidPath;
-    if (req.files) {
-      for (let elmName in req.files) {
-        const file = req.files[elmName];
-        if (!(file instanceof Array)) {
-          createdVidPath = `${videoPath}/${req.body.popId}/swaps/${swapUUID}/video.mov`;
-          console.log("creating new swap", swapUUID);
-          await file.mv(createdVidPath);
-          //temp use local ffmpeg on server to convert to mp4 for playback on android.
-          //eventually move this to ffmpeg.wasm implementation using @ffmpeg/ffmpeg module
-          ffmpeg(createdVidPath, { timeout: 432000 })
-          .addOptions([
-            "-profile:v baseline",
-            "-level 3.0",
-            "-start_number 0",
-            "-hls_time 1",
-            "-hls_list_size 0",
-            "-f hls",
-          ])
-          .output(`${videoPath}/${req.body.popId}/swaps/${swapUUID}/output.m3u8`)
-          .on("end", function () {
-            console.log("conversion done");
-          }
-          )
-          .on("error", function (err) {
-            console.log("an error happened: " + err.message);
-          }
-          )
-          .run();
-
-          
+    
+        if(req.body){
 
           // in the Pop model, find the pop with the UUID of 
           // req.body.popId and add the swapUUID to the childSwapIds array 
           const pop = await Pop.findOne({ uuid: req.body.popId });
-
-          pop.childSwapIds.push(swapUUID);
+          
+          pop.childSwapIds.push(req.body.uuid);
           await pop.save();
-
+          
           //create swap object
           const swap = new Swap({
             popId: req.body.popId,
-            uuid: swapUUID,
+            uuid: req.body.uuid,
             description: req.body.description,
             tags: req.body.tags || "No Tags",
             title: req.body.title || "No Title",
@@ -84,23 +50,12 @@ router.post(
           })
           await swap.save(); 
           uploadSuccess = true;
+          
         }
-      }
-    }
-
-    if(!uploadSuccess){
-      res.status(500).send("upload failed");
-    }
-
-    await extFrms({
-      input: createdVidPath,
-      output: `${videoPath}/${req.body.popId}/swaps/${swapUUID}/thumb.png`,
-      offsets: [1],
-    });
-
+          
+          
     res.json({
-      success: uploadSuccess,
-      recent_upload: swapUUID,
+      success: true,
       parent: req.body.popId,
     })
     .end();
