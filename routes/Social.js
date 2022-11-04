@@ -18,7 +18,7 @@ router.post(
     check('email', 'Please include a valid email').isEmail(),
   ],
   async (req, res) => {
-    console.log("THIS IS FROM USER ROUTE: ", req.body);
+    console.log("THIS IS FROM SOCIAL SIGNUP ROUTE: ", req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
