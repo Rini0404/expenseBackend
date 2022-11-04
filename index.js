@@ -73,6 +73,11 @@ app.get("/appauth", (req, res) => {
   res.sendFile(__dirname + "/views/appauth.html");
 });
 
+app.get("/authHandler", (req, res) => {
+  console.log(req);
+  res.json({ token })
+});
+
 app.get("/loginAuth", (req, res) => {
   res.sendFile(__dirname + "/views/loginAuth.html");
 });
@@ -385,13 +390,13 @@ const hlsServer = new Hls(server, {
 
     },
     getManifestStream: (req, cb) => {
-    //  console.log(`get manifest file ${__dirname}/assets/${req.url}`)
+      //  console.log(`get manifest file ${__dirname}/assets/${req.url}`)
       const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`);
       /// console.log("get manifest:", stream)
       cb(null, stream);
     },
     getSegmentStream: (req, cb) => {
-     // console.log(`get stream ${__dirname}/assets/${req.url}`)
+      // console.log(`get stream ${__dirname}/assets/${req.url}`)
       const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`, { bufferSize: 64 * 1024 });
       cb(null, stream);
     }
