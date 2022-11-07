@@ -37,6 +37,7 @@ const popSchema = new mongoose.Schema({
 });
 
 const swapSchema = new mongoose.Schema({
+    // adding error handlers for when required later on. -Rini
     uuid: {
         type: String,
         required: true

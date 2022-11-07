@@ -39,14 +39,14 @@ router.post(
           await pop.save();
           
           //create swap object
+        
+          // going to add error handlers for when certain inputs are not given later on -Rini
           const swap = new Swap({
-            popId: req.body.popId,
             uuid: req.body.uuid,
-            description: req.body.description,
-            tags: req.body.tags || "No Tags",
-            title: req.body.title || "No Title",
+            description: req.body.description || "No description",
             creator: req.body.creator || "No Creator",
-            parentSwapId: req.body.popId
+            parentSwapId: req.body.popId,
+            topic: req.body.popId,
           })
           await swap.save(); 
           uploadSuccess = true;
