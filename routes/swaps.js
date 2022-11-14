@@ -12,6 +12,8 @@ const { exec } = require("node:child_process");
 
 // swaps
 const { Swap } = require("../models/PopSwapSchema");
+
+const { ChildSwap } = require("../models/PopSwapSchema");
 // const { getPops } = require("../utils/popswapsutil");
 const { Pop } = require("../models/PopSwapSchema");
 
@@ -65,8 +67,43 @@ router.post(
 );
 
 
-router.get("/onPop", async (req, res) => {
+// @route   POST api/swaps/replyToSwap
+// @desc    Route to reply to a swap
+// @access  Public
+router.post(
+  "/replyToSwap",
+  async function (req, res) {
+    console.log(req.files, req.body);
+    let uploadSuccess = false;
 
+    if (req.body) {
+      // in the Swap model, find the swap with the UUID of
+      // req.body.parentSwapId and add the swapUUID to the childSwapIds array
+      const swap = await Swap.findOne({ uuid: req.body.parentSwapId });
+
+      swap.childSwapIds.push(req.body.uuid);
+      await swap.save();
+
+      //create swap object
+
+      const childSwap = new ChildSwap({
+        uuid: req.body.uuid,
+        creator: req.body.creator || "No Creator",
+        parentSwapId: req.body.parentSwapId,
+      });
+      await childSwap.save();
+      uploadSuccess = true;
+    }
+
+    res.json({
+      success: true,
+      parent: req.body.parentSwapId,
+    }).end();
+  }
+);
+
+
+router.get("/onPop", async (req, res) => {
 //  get all the swaps who have the parentSwapId of the popId passed in the query
   const swaps = await Swap.find({ parentSwapId: req.query.popId });
   res.json(swaps);

@@ -69,4 +69,23 @@ const swapSchema = new mongoose.Schema({
     }
 }); 
 
-module.exports = { Pop: mongoose.model("pop", popSchema), Swap: mongoose.model("swap", swapSchema) };
+// @Rini\*
+// Adding ChildSwap Schema 
+
+const childSwapSchema = new mongoose.Schema({
+    uuid : {
+        type: String,
+        required: true
+    },
+    parentSwapId : {
+        type: String, 
+        required: true
+    },
+    creator : {
+        type: String,
+        required: true
+    },
+    
+});
+
+module.exports = { Pop: mongoose.model("pop", popSchema), Swap: mongoose.model("swap", swapSchema), ChildSwap : mongoose.model("ChildSwap", childSwapSchema ) };
