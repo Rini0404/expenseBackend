@@ -10,6 +10,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 const Hls = require("hls-server");
 const fs = require("fs");
+const bodyParser = require("body-parser");
 
 
 /** AdminJS Setup */
@@ -56,6 +57,10 @@ app.use(cors({
 }));
 app.use(admin.options.rootPath, adminRouter);
 app.use(express.json({ extended: false }));
+
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true })); 
+
 app.use(express.static("./assets", { fallthrough: true }));
 app.use(express.static("./public"));
 app.use("/pops", require("./routes/pops"));

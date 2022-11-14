@@ -13,16 +13,16 @@ function convertPopSwap(popSwapOrArray) {
 
         return convAr;
     }
-
-    // addeed childSwapIds for our pops/all returns -Rini
-    const { uuid, description, topic, creator, audience, childSwapIds } = popSwapOrArray;
+    const { uuid, description, topic, creator, audience, childSwapIds, ratingNum, ratingDen } = popSwapOrArray;
     return {
         uuid,
         description,
         topic,
         creator,
         audience,
-        childSwapIds
+        childSwapIds,
+        ratingNumerator: ratingNum,
+        ratingDenominator: ratingDen,
     }
 }
 

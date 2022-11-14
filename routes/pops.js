@@ -9,7 +9,9 @@ const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 //const { exec } = require("node:child_process");
 const { Pop } = require("../models/PopSwapSchema");
-const fs = require("fs");
+const auth = require("../middleware/auth");
+const auth = require("../middleware/auth");
+const User = require("../models/User");
 // const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
 // @route    POST /pops
@@ -56,6 +58,9 @@ router.post(
       success: true,
     });
 
+    req.DBUser.pops.push(Pop.uuid);
+    req.DBUser.save();
+
   }
 );
 
@@ -101,11 +106,60 @@ router.get("/data", async (req, res) => {
   }
 });
 
+router.get("/myPops", auth, async (req, res) => {
+  // TODO: FOrmat pops with convertpopswap
+  res.json(req.DBUser.pops);
+});
+
 router.get("/childSwaps", (req, res) => {
   res.redirect(`/swaps/onPop?popId=${req.query.popId}`);
 });
 
+router.post("/rate", async (req, res) => {
+  const pop = await Pop.findOne({
+    uuid: req.query.popId
+  });
 
+  var er = null;
+
+  if(!pop) {
+    er = "no pop with id " + req.query.popId;
+  }
+
+  const rMax = 9;
+  const rVal = parseInt(req.query.ratingValue);
+
+  if((rMax < rVal || isNaN(rVal) || rVal < 0)) {
+    er = `invalid rating values ${rMax < rVal} ${isNaN(rVal)} ${rVal < 0}`;
+  }
+
+  // if(pop.rated)
+
+  if(er) {
+    return res.status(500)
+    .json(
+      {
+        error: true,
+        reason: er
+      }
+    )
+  }
+
+  if(pop.ratingNum == undefined) {
+    pop.ratingNum = rVal;
+    pop.ratingDen = rMax;
+  } else {
+    pop.ratingNum += rVal;
+    pop.ratingDen += rMax;
+  }
+
+  await pop.save();
+
+  res.json({
+    success: true,
+    pop: convertPopSwap(pop)
+  });
+});
 
 
 module.exports = router;
