@@ -13,7 +13,7 @@ function convertPopSwap(popSwapOrArray) {
 
         return convAr;
     }
-    const { uuid, description, topic, creator, audience, childSwapIds, ratingNum, ratingDen } = popSwapOrArray;
+    const { uuid, description, topic, creator, audience, childSwapIds, ratingNum, ratingDen, rated } = popSwapOrArray;
     return {
         uuid,
         description,
@@ -21,6 +21,7 @@ function convertPopSwap(popSwapOrArray) {
         creator,
         audience,
         childSwapIds,
+        rated,
         ratingNumerator: ratingNum,
         ratingDenominator: ratingDen,
     }

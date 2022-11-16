@@ -10,7 +10,6 @@ const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 //const { exec } = require("node:child_process");
 const { Pop } = require("../models/PopSwapSchema");
 const auth = require("../middleware/auth");
-const auth = require("../middleware/auth");
 const User = require("../models/User");
 // const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
@@ -126,14 +125,13 @@ router.post("/rate", async (req, res) => {
     er = "no pop with id " + req.query.popId;
   }
 
-  const rMax = 9;
+  const rMax = 2;
   const rVal = parseInt(req.query.ratingValue);
 
   if((rMax < rVal || isNaN(rVal) || rVal < 0)) {
     er = `invalid rating values ${rMax < rVal} ${isNaN(rVal)} ${rVal < 0}`;
   }
 
-  // if(pop.rated)
 
   if(er) {
     return res.status(500)
@@ -145,6 +143,12 @@ router.post("/rate", async (req, res) => {
     )
   }
 
+  // get the average rating of the pop using the ratingNum and ratingDen
+  // if the pop has no ratingNum or ratingDen, set them to 0
+
+
+
+
   if(pop.ratingNum == undefined) {
     pop.ratingNum = rVal;
     pop.ratingDen = rMax;
@@ -152,6 +156,12 @@ router.post("/rate", async (req, res) => {
     pop.ratingNum += rVal;
     pop.ratingDen += rMax;
   }
+
+  //set a rating out of 100 
+  pop.rated = Math.round((pop.ratingNum / pop.ratingDen) * 100);
+
+  console.log(pop.rated)
+
 
   await pop.save();
 
