@@ -10,21 +10,22 @@ const { check, validationResult } = require('express-validator');
 // @desc    Get Current User Profile Route
 // @access  Priv
 
-router.post("/me", auth, async (req, res) => {
-  try {
-    const profile = await Profile.findOne({ user: req.user.id }).populate(
-      "user",
-      ["name"]
-    );
-    if (!profile) {
-      return res.status(400).json({ msg: "There is no profile for this user" });
-    }
-    res.json(profile);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+// router.post("/me", auth, async (req, res) => {
+//   try {
+//     const profile = await Profile.findOne({ user: req.user.id }).populate(
+//       "user",
+//       ["name"]
+//     );
+//     if (!profile) {
+//       return res.status(400).json({ msg: "There is no profile for this user" });
+//     }
+//     res.json(profile);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
 
 router.post("/ree", (req, res) => {
   res.send("ree");
@@ -44,7 +45,7 @@ router.post(
       // check("issue", "Skissueills is required").not().isEmpty(),
       check("dob", "dob is required").not().isEmpty(),
       check("zip", "zip is required").not().isEmpty(),
-      // check("pic", "pic is required").not().isEmpty(),
+      check("pic", "pic is required").not().isEmpty(),
       // check("cover", "cover is required").not().isEmpty(),
     ],
   ],
@@ -53,7 +54,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { tag, dob, zip, pronoun, long, lat } = req.body;
+    const { tag, dob, zip, pronoun, pic, cover, long, lat } = req.body;
 
 
     // Build Profile Object
@@ -63,25 +64,27 @@ router.post(
     // if (issue) profileFields.issue = issue;
     if (dob) profileFields.dob = dob;
     if (zip) profileFields.zip = zip;
-    // if (pic) profileFields.pic = pic;
+    if (pic) profileFields.pic = pic;
     // if (cover) profileFields.cover = cover;
     if (pronoun) profileFields.pronoun = pronoun;
 
     // profileFields.long = long;
     // profileFields.lat = lat;
 
-    profileFields.geographic = {
-      name: "geonamehere",
-      location: {
-        location: {
-          type: "Point",
-          coordinates: [
-            parseInt(long) || 0,
-            parseInt(lat) || 0,
-          ]
-        }
-      }
-    }
+    // profileFields.geographic = {
+    //   name: "geonamehere",
+    //   location: {
+    //     location: {
+    //       type: "Point",
+    //       coordinates: [
+    //         parseInt(long) || 0,
+    //         parseInt(lat) || 0,
+    //       ]
+    //     }
+    //   }
+    // }
+
+    console.log(profileFields);
 
     try {
       let profile = await Profile.findOne({ user: req.user.id });
@@ -143,6 +146,27 @@ router.get("/user/:user_id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+// view a users profile by their auth token
+router.get("/view", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.user.id,
+    }).populate("user", ["name"]);
+
+    if (!profile) return res.status(400).json({ msg: "Profile not found" });
+
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == "ObjectId") {
+      return res.status(400).json({ msg: "Profile not found" });
+    }
+
+    res.status(500).send("Server Error");
+  }
+});
+
 
 
 // get user by auth token

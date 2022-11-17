@@ -43,6 +43,7 @@ router.post(
         uuid: req.body.uuid,
         topic: req.body.topic,
         description: req.body.description,
+        creatorPic: req.body.creatorPic,
         childSwapIds: [],
       });
       await pop.save();
@@ -57,8 +58,8 @@ router.post(
       success: true,
     });
 
-    req.DBUser.pops.push(Pop.uuid);
-    req.DBUser.save();
+    // req.DBUser.pops.push(Pop.uuid);
+    // req.DBUser.save();
 
   }
 );

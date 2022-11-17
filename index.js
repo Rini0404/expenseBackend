@@ -19,7 +19,7 @@ const connection = require("./config/db.config");
 
 const Users = require("./models/User");
 const Profile = require("./models/Profile");
-const { Pop, Swap } = require("./models/PopSwapSchema");
+const { Pop, Swap, ChildSwap} = require("./models/PopSwapSchema");
 
 AdminJS.registerAdapter(AdminJSMongoose);
 
@@ -71,6 +71,7 @@ app.use("/profile", require("./routes/profile"));
 app.use("/auth", require("./routes/auth"));
 app.use("/social", require("./routes/Social"));
 app.use("/socialauth", require("./routes/SocialAuth"));
+app.use("/childSwaps", require("./routes/ChildSwaps"));
 // app.use("/post", require("./routes/postvid"));
 
 app.get("/", (req, res) => {

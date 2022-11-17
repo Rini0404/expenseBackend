@@ -49,6 +49,8 @@ router.post(
             creator: req.body.creator || "No Creator",
             parentSwapId: req.body.popId,
             topic: req.body.popId,
+            creatorPic: req.body.creatorPic,
+
           })
           await swap.save(); 
           uploadSuccess = true;
@@ -68,7 +70,7 @@ router.post(
 
 
 // @route   POST api/swaps/replyToSwap
-// @desc    Route to reply to a swap
+// @desc    Route to reply to a swap AKA CHILDSWAP
 // @access  Public
 router.post(
   "/replyToSwap",
@@ -90,6 +92,8 @@ router.post(
         uuid: req.body.uuid,
         creator: req.body.creator || "No Creator",
         parentSwapId: req.body.parentSwapId,
+        creatorPic: req.body.creatorPic,
+
       });
       await childSwap.save();
       uploadSuccess = true;

@@ -37,10 +37,10 @@ const ProfileSchema = new mongoose.Schema({
   zip: {
     type: String
   },
-  geographic: geoSchema,
-  // pic: { 
-  //   type: String
-  // },
+  // geographic: geoSchema,
+  pic: { 
+    type: String
+  },
   // cover : { 
   //   type: String
   // },

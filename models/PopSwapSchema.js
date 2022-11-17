@@ -25,6 +25,10 @@ const popSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    creatorPic: {
+        type: String,
+        required: true
+    },
     audience: {
         type: String,
         required: true
@@ -84,7 +88,11 @@ const swapSchema = new mongoose.Schema({
     },
     ratingDen: {
         type: Number
-    }
+    },
+    creatorPic: {
+        type: String,
+        required: true
+    },
 }); 
 
 // @Rini\*
@@ -103,7 +111,10 @@ const childSwapSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    
+    creatorPic: {
+        type: String,
+        required: true
+    },
 });
 
 module.exports = { Pop: mongoose.model("pop", popSchema), Swap: mongoose.model("swap", swapSchema), ChildSwap : mongoose.model("ChildSwap", childSwapSchema ) };
