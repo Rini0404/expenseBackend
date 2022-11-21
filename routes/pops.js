@@ -11,6 +11,7 @@ const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const { Pop } = require("../models/PopSwapSchema");
 const auth = require("../middleware/auth");
 const User = require("../models/User");
+const Profile = require("../models/Profile");
 // const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
 // @route    POST /pops
@@ -40,6 +41,7 @@ router.post(
         creator: req.body.creator,
         topic: req.body.topic,
         audience: req.body.audience,
+        creatorId: req.body.creatorId,
         uuid: req.body.uuid,
         topic: req.body.topic,
         description: req.body.description,
@@ -48,6 +50,15 @@ router.post(
       });
       await pop.save();
 
+      // find the users profile and add the pop to their profile
+      const profile = await Profile.findOne({ user: req.body.creatorId });
+
+      console.log("profile", profile );
+
+      profile.myPops.push(pop.uuid)
+      await profile.save();
+
+     
       
     } else {
       res.status(500).json({
@@ -58,8 +69,7 @@ router.post(
       success: true,
     });
 
-    // req.DBUser.pops.push(Pop.uuid);
-    // req.DBUser.save();
+    
 
   }
 );

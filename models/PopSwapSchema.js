@@ -27,7 +27,10 @@ const popSchema = new mongoose.Schema({
     },
     creatorPic: {
         type: String,
-        required: true
+    },
+    creatorId: {
+        type: String,
+        // required: true
     },
     audience: {
         type: String,
@@ -70,6 +73,10 @@ const swapSchema = new mongoose.Schema({
         type: String,
         // required: true
     },
+    creatorId: {
+        type: String,
+        // required: true
+    },
     audience: {
         type: String,
         // required: true
@@ -91,7 +98,6 @@ const swapSchema = new mongoose.Schema({
     },
     creatorPic: {
         type: String,
-        required: true
     },
 }); 
 
@@ -113,7 +119,6 @@ const childSwapSchema = new mongoose.Schema({
     },
     creatorPic: {
         type: String,
-        required: true
     },
 });
 

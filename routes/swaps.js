@@ -17,6 +17,8 @@ const { ChildSwap } = require("../models/PopSwapSchema");
 // const { getPops } = require("../utils/popswapsutil");
 const { Pop } = require("../models/PopSwapSchema");
 
+const Profile = require("../models/Profile");
+
 // route to view swaps
 // if (!fs.existsSync(videoPath)) {
 //   fs.mkdirSync(videoPath);
@@ -45,6 +47,7 @@ router.post(
           // going to add error handlers for when certain inputs are not given later on -Rini
           const swap = new Swap({
             uuid: req.body.uuid,
+            creatorId: req.body.creatorId,
             description: req.body.description || "No description",
             creator: req.body.creator || "No Creator",
             parentSwapId: req.body.popId,
@@ -54,6 +57,17 @@ router.post(
           })
           await swap.save(); 
           uploadSuccess = true;
+
+           // find the users profile and add the pop to their profile
+            const profile = await Profile.findOne({ user: req.body.creatorId });
+
+            console.log("profile", profile );
+
+            profile.mySwaps.push(pop.uuid)
+            
+            await profile.save();
+
+     
           
         }
           

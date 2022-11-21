@@ -44,6 +44,18 @@ const ProfileSchema = new mongoose.Schema({
   // cover : { 
   //   type: String
   // },
+  myPops: {
+    type: [String]
+  },
+  mySwaps: {
+    type: [String]
+  },
+  myCHildSwaps: {
+    type: [String]
+  },
+  myLikes: {
+    type: [String]
+  },
 });
 
 module.exports = mongoose.model('profile', ProfileSchema);
