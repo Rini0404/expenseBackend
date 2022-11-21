@@ -63,7 +63,7 @@ router.post(
 
             console.log("profile", profile );
 
-            profile.mySwaps.push(pop.uuid)
+            profile.mySwaps.push(req.body.uuid)
             
             await profile.save();
 
@@ -107,9 +107,18 @@ router.post(
         creator: req.body.creator || "No Creator",
         parentSwapId: req.body.parentSwapId,
         creatorPic: req.body.creatorPic,
-
+        creatorId: req.body.creatorId,
       });
-      await childSwap.save();
+
+      // get the creator's profile and add the swap to their profile
+      const profile = await Profile.findOne({ user: req.body.creatorId });
+
+      console.log("profile", profile);
+
+      profile.myCHildSwaps.push(req.body.uuid);
+      await profile.save(); 
+
+        await childSwap.save();
       uploadSuccess = true;
     }
 

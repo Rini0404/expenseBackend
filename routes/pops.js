@@ -56,6 +56,7 @@ router.post(
       console.log("profile", profile );
 
       profile.myPops.push(pop.uuid)
+      
       await profile.save();
 
      
