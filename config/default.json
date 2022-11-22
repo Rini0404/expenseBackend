@@ -1,5 +1,5 @@
 {
-    "mongoURI":"mongodb+srv://devusol:Devusol_Pa55!@cluster0.tktlwcs.mongodb.net/?retryWrites=true&w=majority",
+    "mongoURI":"mmongodb+srv://RiniNat:Natcat0404!@cluster0.gi02edg.mongodb.net/?retryWrites=true&w=majority",
     "jwtSecret":"devusol",
   "devSecrete": "devusolScreteKey"
 }

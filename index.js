@@ -24,7 +24,7 @@ const AdminJSOptions = {
 };
 
 const DEFAULT_ADMIN = {
-  email: "sean@devusol.com",
+  email: "rini@admin.com",
   password: "123456",
 };
 
@@ -53,9 +53,6 @@ app.use(cors({
 app.use(admin.options.rootPath, adminRouter);
 app.use(express.json({ extended: false }));
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true })); 
-
 app.use(express.static("./assets", { fallthrough: true }));
 app.use(express.static("./public"));
 app.use("/users", require("./routes/users"));
@@ -64,7 +61,6 @@ app.use("/auth", require("./routes/auth"));
 app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/views/testpage.html");
 });
-
 
 
 app.get("*", (req, res) => {
@@ -77,38 +73,3 @@ const server = app.listen(port, (err) => {
   console.log(`Example app listening on port ${port}`);
 });
 
-const hlsServer = new Hls(server, {
-  provider: {
-    exists: (req, cb) => {
-      const ext = req.url.split(".").pop();
-      //console.log("ext: ", req.url.split("."))
-      // ext = ext.pop();
-      if (ext != "m3u8" && ext != "ts") {
-        //   console.log(`${ext} is not hls related`)
-        return cb(null, true);
-      }
-      // console.log(`checking if ${ext} file exists`)
-      fs.access(`${__dirname}/assets/${req.url}`, fs.constants.F_OK, function (er) {
-        if (er) {
-          // console.log("unable to find file: ", er);
-          return cb(null, false);
-        }
-        //  console.log("it does")
-        cb(null, true);
-      });
-
-
-    },
-    getManifestStream: (req, cb) => {
-      //  console.log(`get manifest file ${__dirname}/assets/${req.url}`)
-      const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`);
-      /// console.log("get manifest:", stream)
-      cb(null, stream);
-    },
-    getSegmentStream: (req, cb) => {
-      // console.log(`get stream ${__dirname}/assets/${req.url}`)
-      const stream = fs.createReadStream(`${__dirname}/assets/${req.url}`, { bufferSize: 64 * 1024 });
-      cb(null, stream);
-    }
-  }
-});

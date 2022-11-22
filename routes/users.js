@@ -7,6 +7,15 @@ const { check, validationResult } = require('express-validator');
 
 const User = require('../models/User');
 
+
+router.get('/test', (req, res) => {
+
+    res.send('User Route');
+});
+
+
+
+
 // @route    POST api/users
 // @desc     Register user
 // @access   Public
@@ -49,19 +58,6 @@ router.post(
       const salt = await bcrypt.genSalt(15);
 
       user.password = await bcrypt.hash(password, salt);
-
-      // user.geographic = {
-      //   name: loc.name,
-      //   location: {
-      //     location: {
-      //       type: "Point",
-      //       coordinates: [
-      //         parseInt(loc.long) || 0,
-      //         parseInt(loc.lat) || 0,
-      //       ]
-      //     }
-      //   }
-      // }
 
       await user.save();
 
