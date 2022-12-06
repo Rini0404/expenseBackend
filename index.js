@@ -57,6 +57,7 @@ app.use(express.static("./assets", { fallthrough: true }));
 app.use(express.static("./public"));
 app.use("/users", require("./routes/users"));
 app.use("/auth", require("./routes/auth"));
+app.use("/socialLogins", require("./routes/socialLogins"));
 
 app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/views/testpage.html");
